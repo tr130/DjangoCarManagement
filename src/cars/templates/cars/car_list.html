@@ -1,0 +1,8 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+{% for car in cars %}
+    <a href="{% url 'cars:car-overview' car.id %}">{{ car.model_name }}</a>
+    {{ car.owner }}
+{% endfor %}
+{% endblock content %}

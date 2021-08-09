@@ -1,0 +1,53 @@
+{% extends 'cars/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<h1>Car overview</h1>
+<h3>{{ car.model_name }}</h3>
+<h4>{{ car.year }}</h4>
+Owner: {{ car.owner }}
+
+{% if request.user == car.owner.user %}
+    You own this car.
+{% else %}
+    You don't own this car.
+{% endif %}
+
+<ol>
+    {% for job in jobs %}
+        <li>{{ job.title }}</li>
+    {% endfor %}
+</ol>
+
+{% if role == 'Manager' %}
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Add job
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add job</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="" id="job-form" method="post">
+            {% csrf_token %}
+            {{ job_form|crispy }}
+            <button type="submit" class="btn btn-info mt-2">Save</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endif %}
+{% endblock content %}
