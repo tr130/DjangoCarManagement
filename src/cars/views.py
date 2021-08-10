@@ -11,8 +11,9 @@ def home(request):
     print(request.user.is_authenticated)
     print(request.user.groups.first())
     print(request.user.groups.filter(name = 'Customer').exists())
+    role = request.user.groups.first().name
     #print(request.user.first_name)
-    return render(request, 'cars/home.html')
+    return render(request, 'cars/home.html', {'role': role})
 
 @login_required
 def car_overview(request, pk):
@@ -29,7 +30,6 @@ def car_overview(request, pk):
         return redirect('cars:car-list')
     elif role == 'Manager':
         job_form = JobForm(initial={'car': car, 'manager': request.user})
-    print(request.user.employee.assigned_job.all())
 
     context = {
         'car': car,
@@ -48,3 +48,13 @@ def car_list(request):
         'cars': cars,
     }
     return render(request, 'cars/car_list.html', context)
+
+@login_required
+def job_details(request, pk):
+    job = get_object_or_404(Job, id=pk)
+    role = request.user.groups.first().name
+    context = {
+        'job': job,
+        'role': role,
+    }
+    return render(request, 'cars/job_details.html', context)

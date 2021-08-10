@@ -14,11 +14,22 @@ Owner: {{ car.owner }}
     You don't own this car.
 {% endif %}
 
-<ol>
-    {% for job in jobs %}
-        <li>{{ job.title }}</li>
+
+<div class="list-group">
+    {% for job in car.job_set.all %}
+        <a href="{% url 'cars:job-details' job.id %}" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ job.title }}</h5>
+                <small>{{ job.created }}</small>
+            </div>
+            <p class="mb-1">{{ job.description|truncatewords:6 }}</p>
+            <div class="d-flex w-100 justify-content-between">
+                <small>Assigned to: {{ job.employee }}</small>
+                <small>Expected by: {{ job.expected_complete }}</small>
+            </div>
+        </a>
     {% endfor %}
-</ol>
+</div>
 
 {% if role == 'Manager' %}
 <!-- Button trigger modal -->

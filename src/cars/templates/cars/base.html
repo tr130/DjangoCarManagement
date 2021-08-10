@@ -40,12 +40,12 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             {% for job in request.user.employee.assigned_job.all %}
-                            <li><a class="dropdown-item" href="#">{{ job.car.reg }} - {{ job.title }}</a></li>
+                            <li><a class="dropdown-item" href="{% url 'cars:job-details' job.id %}">{{ job.car.reg }} - {{ job.title }}</a></li>
                             {% endfor %}
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="#">See all</a></li>
+                            <li><a class="dropdown-item" href="{% url 'cars:home' %}">See all</a></li>
                         </ul>
                     </li>
                     {% endif %}
@@ -54,17 +54,14 @@
                         <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
                     </li>
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
+                {% if request.user.is_authenticated %}
+                    {{ request.user.first_name }} {{ request.user.last_name }}
+                        <a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a>
+                {% endif %}
             </div>
         </div>
         </div>
     </nav>
-    {% if request.user.is_authenticated %}
-    Logged in as {{ request.user.first_name }} {{ request.user.last_name }}
-    {% endif %}
     {% block content %}
     {% endblock content %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

@@ -2,4 +2,23 @@
 
 {% block content %}
 <h1>Homepage</h1>
+
+{% if role == 'Employee' %}
+<div class="list-group">
+    {% for job in request.user.employee.assigned_job.all %}
+        <a href="{% url 'cars:job-details' job.id %}" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ job.title }}</h5>
+                <small>{{ job.created }}</small>
+            </div>
+            <p class="mb-1">{{ job.car.reg }} - {{ job.car.model_name }}</p>
+            <div class="d-flex w-100 justify-content-between">
+                <small>{{ job.description|truncatewords:6 }}</small>
+                <small>Expected by: {{ job.expected_complete }}</small>
+            </div>
+        </a>
+    {% endfor %}
+</div>
+{% endif %}
+
 {% endblock content %}

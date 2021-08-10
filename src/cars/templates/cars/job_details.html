@@ -1,0 +1,47 @@
+{% extends 'cars/base.html' %}
+
+{% load cars_extras %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h1>{{ job.title }}</h1>
+    </div>
+    <div class="card-body container row justify-content-between">
+        <div class="col-8">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <h5 class="card-title">{{ job.car.reg }} - {{ job.car.model_name }}</h5>
+                </li>
+                <li class="list-group-item">
+                    <h6>Owner: {{ job.car.owner }}</h6>
+                </li>
+                <li class="list-group-item">
+                    <p>{{ job.description }}</p>
+                </li>
+            </ul>
+        </div>
+        <div class="col-4">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between">
+                    <p>Job created</p>
+                    <p><b>{{ job.created|date:"D d/m/y H:i" }}</b></p>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <p>Expected by</p>
+                    <p><b>{{ job.expected_complete|date:"D d/m/y H:i" }}</b><br><small>({{ job.expected_complete|timeuntil }})</small></p>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <p>Last Updated</p>
+                    <p><b>{{ job.updated|date:"D d/m/y H:i" }}</b></p>
+                </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <p>Estimated Time</p>
+                    <p><b>{{ job.estimated_time|duration }}</b></p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+{% endblock content %}

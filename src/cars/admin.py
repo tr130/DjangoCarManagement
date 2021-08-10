@@ -6,3 +6,4 @@ admin.site.register(Car)
 admin.site.register(Job)
 admin.site.register(PartUnit)
 admin.site.register(LabourUnit)
+
