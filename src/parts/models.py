@@ -8,4 +8,4 @@ class Part(models.Model):
     stock_level = models.PositiveIntegerField()
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.stock_level} in stock)"

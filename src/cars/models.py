@@ -1,7 +1,7 @@
 from django.db import models
 from parts.models import Part
 from accounts.models import User, Employee, Customer, Manager
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 # Create your models here.
 class Car(models.Model):
@@ -34,10 +34,18 @@ class PartUnit(models.Model):
     part = models.ForeignKey(Part, on_delete=models.PROTECT)
     quantity = models.IntegerField()
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    added_by = models.ForeignKey(Employee, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f"{self.job.car.reg} - {self.part} x {self.quantity}"
 
 class LabourUnit(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    consumables = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
+    time_spent = models.DurationField(default=timedelta())
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.job.car.reg} - {self.job} - {self.time_spent}"
 

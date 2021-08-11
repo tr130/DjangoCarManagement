@@ -1,13 +1,14 @@
 {% extends 'cars/base.html' %}
 
 {% load cars_extras %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<div class="card">
+<div class="card mb-5">
     <div class="card-header">
         <h1>{{ job.title }}</h1>
     </div>
-    <div class="card-body container row justify-content-between">
+    <div class="card-body row">
         <div class="col-8">
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
@@ -29,7 +30,8 @@
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
                     <p>Expected by</p>
-                    <p><b>{{ job.expected_complete|date:"D d/m/y H:i" }}</b><br><small>({{ job.expected_complete|timeuntil }})</small></p>
+                    <p><b>{{ job.expected_complete|date:"D d/m/y H:i" }}</b><br><small>({{ job.expected_complete|timeuntil }})</small>
+                    </p>
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
                     <p>Last Updated</p>
@@ -39,9 +41,98 @@
                     <p>Estimated Time</p>
                     <p><b>{{ job.estimated_time|duration }}</b></p>
                 </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <p>Time Spent</p>
+                    <p><b>{{ time_spent|duration }}</b></p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="card-footer row">
+        <div class="col-6">
+            <h4 class="card-title d-inline">Time units</h4>
+            <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#timeModal">
+                Add job
+            </a>
+
+            <!-- Modal -->
+            <div class="modal fade" id="timeModal" tabindex="-1" aria-labelledby="timeModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="timeModalLabel">Add job</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="" id="time-form" method="post">
+                                {% csrf_token %}
+                                {{ time_form|crispy }}
+                                <input type="hidden" name="unit" value="labour">
+                                <button type="submit" class="btn btn-info mt-2">Save</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <ul class="list-group list-group-flush">
+                {% for labour_unit in job.labourunit_set.all %}
+                <li class="list-group-item">
+                    <b class="card-title">{{ labour_unit.created|date:"D d/m/y H:i" }}</b>
+                    <p><b>Added by: </b>{{ labour_unit.employee }}</p>
+                    <p>{{ labour_unit.description }}</p>
+                    <small>{{ labour_unit.time_spent|duration }}</small>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-6">
+            <h4 class="card-title d-inline">Parts</h4>
+            <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#partModal">
+                Add part
+            </a>
+
+            <!-- Modal -->
+            <div class="modal fade" id="partModal" tabindex="-1" aria-labelledby="partModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="partModalLabel">Add part</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="" id="part-form" method="post">
+                                {% csrf_token %}
+                                {{ part_form|crispy }}
+                                <input type="hidden" name="unit" value="part">
+                                <button type="submit" class="btn btn-info mt-2">Save</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for part_unit in job.partunit_set.all %}
+                <li class="list-group-item">
+                    <b class="card-title">{{ part_unit.part.name }}</b>
+                    <p><b>Added by: </b>{{ part_unit.added_by }}</p>
+                    <p>{{ part_unit.quantity }} @ £{{ part_unit.part.customer_price }}</p>
+                    <small>Total cost:
+                        <b>£{% widthratio part_unit.quantity 1 part_unit.part.customer_price %}</b></small>
+                </li>
+                {% endfor %}
             </ul>
         </div>
     </div>
 </div>
-    
+
 {% endblock content %}
