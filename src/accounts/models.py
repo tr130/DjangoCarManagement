@@ -5,6 +5,9 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     pass
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     hourly_rate = models.DecimalField(max_digits=10, decimal_places=2)

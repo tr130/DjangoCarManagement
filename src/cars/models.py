@@ -20,6 +20,7 @@ class Job(models.Model):
     car = models.ForeignKey(Car, on_delete=models.PROTECT)
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='assigned_job')
     manager = models.ForeignKey(Manager, on_delete=models.PROTECT, related_name='supervised_job')
+    in_progress = models.BooleanField(default=False)
     complete = models.BooleanField(default=False)
     paid = models.BooleanField(default=False)
     estimated_time = models.DurationField(default=timedelta())
@@ -39,6 +40,9 @@ class PartUnit(models.Model):
     def __str__(self):
         return f"{self.job.car.reg} - {self.part} x {self.quantity}"
 
+    def get_cost(self):
+        return self.part.customer_price * self.quantity
+
 class LabourUnit(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
@@ -48,4 +52,8 @@ class LabourUnit(models.Model):
 
     def __str__(self):
         return f"{self.job.car.reg} - {self.job} - {self.time_spent}"
+
+    def get_cost(self):
+        #return '{:.2f}'.format(self.time_spent.seconds/3600 * float(self.employee.hourly_rate))
+        return self.time_spent.seconds/3600 * float(self.employee.hourly_rate)
 

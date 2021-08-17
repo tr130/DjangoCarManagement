@@ -1,8 +1,22 @@
 {% extends 'cars/base.html' %}
 
 {% block content %}
-{% for car in cars %}
-    <a href="{% url 'cars:car-overview' car.id %}">{{ car.model_name }}</a>
-    {{ car.owner }}
-{% endfor %}
+<h1>{{ request.user }}'s Cars</h1>
+
+<div class="list-group">
+    {% for car in cars %}
+    <a href="{% url 'cars:car-overview' car.id %}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <div>
+                <h5 class="mb-1 d-inline">{{ car.model_name }}</h5>
+            </div>
+        </div>
+        <p class="mb-1">{{ car.reg }}</p>
+        <div class="d-flex w-100 justify-content-between">
+            <small>{{ car.year }}</small>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
 {% endblock content %}

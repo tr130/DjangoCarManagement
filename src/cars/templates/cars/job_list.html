@@ -1,0 +1,43 @@
+{% extends 'cars/base.html' %}
+
+{% load tz %}
+
+{% block content %}
+<h1>{{ request.user }}'s Job List</h1>
+
+
+<div class="list-group">
+    {% for job in jobs %}
+    <a href="{% url 'cars:job-details' job.id %}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <div>
+                <h5 class="mb-1 d-inline">{{ job.title }}</h5>
+                {% if job.complete %}
+                <span class="badge rounded-pill bg-success">Complete</span>
+                {% elif job.in_progress %}
+                <span class="badge rounded-pill bg-warning text-dark">In Progress</span>
+                {% else %}
+                <span class="badge rounded-pill bg-danger">Not Started</span>
+                {% endif %}
+            </div>
+
+        </div>
+        <p class="mb-1">{{ job.car.reg }} - {{ job.car.model_name }}</p>
+        <div class="d-flex w-100 justify-content-between">
+            <small>{{ job.description|truncatewords:6 }}</small>
+            
+            <small>
+                {% if job.expected_complete < current_time %}
+                <b style="color:red" >Overdue</b>
+                {% else %}
+                Expected in: <b>{{ job.expected_complete|timeuntil }}</b>
+                {% endif %}
+            </small>
+            
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+
+{% endblock content %}

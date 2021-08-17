@@ -1,12 +1,18 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.template.loader import get_template
+from django.urls import reverse
+from django.utils import timezone
+
+from .forms import JobForm, LabourUnitForm, PartUnitForm
 from .models import Car, Job, PartUnit, LabourUnit
 from parts.models import Part
-from .forms import JobForm, LabourUnitForm, PartUnitForm
+
 from datetime import timedelta
-from django.utils import timezone
+from xhtml2pdf import pisa
 
 # Create your views here.
 
@@ -15,13 +21,32 @@ def home(request):
     print('authenticated:')
     print(request.user.is_authenticated)
     print(request.user.groups.first())
-    print(request.user.groups.filter(name = 'Customer').exists())
     if request.user.groups.first():
         role = request.user.groups.first().name
     else:
         role = None
-    #print(request.user.first_name)
-    return render(request, 'cars/home.html', {'role': role})
+    if role == 'Employee':
+        jobs = request.user.employee.assigned_job.all().order_by('expected_complete')
+        current_time = timezone.now()
+        context = {
+            'current_time': current_time,
+            'jobs': jobs,
+        }
+        return render(request, 'cars/job_list.html', context)
+    elif role == 'Customer':
+        cars = request.user.customer.car_set.all()
+        context = {
+            'cars': cars,
+        }
+        return render(request, 'cars/car_list.html', context)
+    elif role == 'Manager':
+        jobs = Job.objects.all().order_by('expected_complete')
+        current_time = timezone.now()
+        context = {
+            'jobs': jobs,
+            'current_time': current_time,
+        }
+        return render(request, 'cars/job_list.html', context)
 
 @login_required
 def car_overview(request, pk):
@@ -38,7 +63,7 @@ def car_overview(request, pk):
         role = None
     job_form = None
     if role == 'Customer' and request.user != car.owner.user:
-        return redirect('cars:car-list')
+        return redirect('cars:home')
     elif role == 'Manager':
         job_form = JobForm(initial={'car': car, 'manager': request.user})
 
@@ -49,16 +74,6 @@ def car_overview(request, pk):
         'jobs': jobs,
     }
     return render(request, 'cars/car_overview.html', context)
-
-def car_list(request):
-    if request.user.groups.filter(name = 'Customer').exists():
-        cars = Car.objects.filter(owner = request.user.customer)
-    else:
-        cars = Car.objects.all()
-    context = {
-        'cars': cars,
-    }
-    return render(request, 'cars/car_list.html', context)
 
 @login_required
 def job_details(request, pk):
@@ -76,10 +91,13 @@ def job_details(request, pk):
         time_form = LabourUnitForm(initial={'employee': request.user.employee.id, 'job': job})
         part_form = PartUnitForm(initial={'added_by': request.user.employee.id, 'job': job})
     if request.method == 'POST':
+        error = None
         if request.POST['unit'] == 'labour':
             form = LabourUnitForm(request.POST)
+            form.save()
+            job.in_progress = True
+            job.save()
         elif request.POST['unit'] == 'part':
-            error = None
             quantity = 0
             print(request.POST)
             try:
@@ -97,17 +115,72 @@ def job_details(request, pk):
                     error = 'Insufficient stock'
             if error is not None:
                 print(error)
+                messages.warning(request, error)
             else:
                 print('success')
-                #form = PartUnitForm(request.POST)
-        ##form.save()
-        #job.save()
+                part.stock_level = F('stock_level') - quantity
+                part.save()
+                part.refresh_from_db()
+                form = PartUnitForm(request.POST)
+                form.save()
+                job.in_progress = True
+                job.save()
+        elif request.POST['unit'] == 'complete':
+            job.complete = not job.complete
+            job.in_progress = False
+            job.save()
         return HttpResponseRedirect(reverse('cars:job-details', args=(job.id,)))
+    current_time = timezone.now()
     context = {
         'job': job,
         'role': role,
+        'current_time': current_time,
         'time_spent': time_spent,
         'time_form': time_form,
         'part_form': part_form,
     }
+
     return render(request, 'cars/job_details.html', context)
+
+@login_required
+def invoice(request, pk):
+    job = get_object_or_404(Job, id=pk)
+    if not job.complete:
+        return redirect('cars:job-details', pk)
+    time_spent = timedelta(hours= 0, minutes=0)
+    labour_cost = 0.0
+    parts_cost = 0.0
+    for labour_unit in job.labourunit_set.all():
+        time_spent += labour_unit.time_spent
+        labour_cost += labour_unit.get_cost()
+    for part_unit in job.partunit_set.all():
+        parts_cost += float(part_unit.get_cost())
+    grand_total = labour_cost + parts_cost
+    context = {
+        'job': job,
+        'time_spent': time_spent,
+        'labour_cost': labour_cost,
+        'parts_cost': parts_cost,
+        'grand_total': grand_total,
+    }
+
+    template_path = 'cars/invoice.html'
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+    # if download
+    #response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    #if display
+    response['Content-Disposition'] = 'filename="invoice.pdf"'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    # if error:
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response
+
+    #return render(request, 'cars/invoice.html', context)

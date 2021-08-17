@@ -4,9 +4,29 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert alert-danger mb-0 text-center" role="alert">
+        {{ message }}
+        <hr>
+        <a href="#" type="button" class="btn btn-secondary">Report issue</a>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <div class="card mb-5">
     <div class="card-header">
-        <h1>{{ job.title }}</h1>
+        <h1 class="d-inline me-3">{{ job.title }}</h1>
+        {% if job.complete %}
+        <span class="badge rounded-pill bg-success">Complete</span>
+        {% elif job.in_progress %}
+        <span class="badge rounded-pill bg-warning text-dark">In Progress</span>
+        {% else %}
+        <span class="badge rounded-pill bg-danger">Not Started</span>
+        {% endif %}
     </div>
     <div class="card-body row">
         <div class="col-8">
@@ -21,6 +41,20 @@
                     <p>{{ job.description }}</p>
                 </li>
             </ul>
+            {% if role != 'Customer' %}
+                {% if job.complete %}
+                <a type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#completeModal">
+                    Mark as incomplete
+                </a>
+                {% else %}
+                <a type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#completeModal">
+                    Mark as complete
+                </a>
+                {% endif %}
+            {% endif %}
+            {% if role == 'Manager' and job.complete %}
+                <a href="{% url 'cars:job-invoice' job.id %}" class="btn btn-primary">Generate Invoice</a>
+            {% endif %}
         </div>
         <div class="col-4">
             <ul class="list-group list-group-flush">
@@ -30,7 +64,13 @@
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
                     <p>Expected by</p>
-                    <p><b>{{ job.expected_complete|date:"D d/m/y H:i" }}</b><br><small>({{ job.expected_complete|timeuntil }})</small>
+                    <p><b>{{ job.expected_complete|date:"D d/m/y H:i" }}</b><br>
+                    <small>({% if job.expected_complete < current_time %}
+                        <b style="color:red" >Overdue</b>
+                        {% else %}
+                        {{ job.expected_complete|timeuntil }}
+                        {% endif %})
+                    </small>
                     </p>
                 </li>
                 <li class="list-group-item d-flex justify-content-between">
@@ -50,35 +90,14 @@
     </div>
     <div class="card-footer row">
         <div class="col-6">
-            <h4 class="card-title d-inline">Time units</h4>
+            <h4 class="card-title">Time units</h4>
+            {% if role != 'Customer' %}
             <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#timeModal">
                 Add job
             </a>
 
-            <!-- Modal -->
-            <div class="modal fade" id="timeModal" tabindex="-1" aria-labelledby="timeModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-xl modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="timeModalLabel">Add job</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="" id="time-form" method="post">
-                                {% csrf_token %}
-                                {{ time_form|crispy }}
-                                <input type="hidden" name="unit" value="labour">
-                                <button type="submit" class="btn btn-info mt-2">Save</button>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
+            {% endif %}
 
             <ul class="list-group list-group-flush">
                 {% for labour_unit in job.labourunit_set.all %}
@@ -92,34 +111,14 @@
             </ul>
         </div>
         <div class="col-6">
-            <h4 class="card-title d-inline">Parts</h4>
-            <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#partModal">
-                Add part
-            </a>
+            <h4 class="card-title">Parts</h4>
+            {% if role != 'Customer' %}
+                <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#partModal">
+                    Add part
+                </a>
+            {% endif %}
 
-            <!-- Modal -->
-            <div class="modal fade" id="partModal" tabindex="-1" aria-labelledby="partModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="partModalLabel">Add part</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="" id="part-form" method="post">
-                                {% csrf_token %}
-                                {{ part_form|crispy }}
-                                <input type="hidden" name="unit" value="part">
-                                <button type="submit" class="btn btn-info mt-2">Save</button>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
             <ul class="list-group list-group-flush">
                 {% for part_unit in job.partunit_set.all %}
                 <li class="list-group-item">
@@ -127,12 +126,91 @@
                     <p><b>Added by: </b>{{ part_unit.added_by }}</p>
                     <p>{{ part_unit.quantity }} @ £{{ part_unit.part.customer_price }}</p>
                     <small>Total cost:
-                        <b>£{% widthratio part_unit.quantity 1 part_unit.part.customer_price %}</b></small>
+                        <b>£{{ part_unit.get_cost }}</b></small>
                 </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
 </div>
+
+{% if role != 'Customer' %}
+
+<!-- Modal -->
+<div class="modal fade" id="completeModal" tabindex="-1" aria-labelledby="completeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="completeModalLabel">Mark as 
+                {% if job.complete %}
+                Incomplete
+                {% else %}
+                Complete
+                {% endif %}
+                ?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="complete-form" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="unit" value="complete">
+                    <button type="submit" class="btn btn-success">Yes</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+            <!-- Modal -->
+<div class="modal fade" id="partModal" tabindex="-1" aria-labelledby="partModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="partModalLabel">Add part</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="part-form" method="post">
+                    {% csrf_token %}
+                    {{ part_form|crispy }}
+                    <input type="hidden" name="unit" value="part">
+                    <button type="submit" class="btn btn-info mt-2">Save</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+                <!-- Modal -->
+<div class="modal fade" id="timeModal" tabindex="-1" aria-labelledby="timeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="timeModalLabel">Add job</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" id="time-form" method="post">
+                    {% csrf_token %}
+                    {{ time_form|crispy }}
+                    <input type="hidden" name="unit" value="labour">
+                    <button type="submit" class="btn btn-info mt-2">Save</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
 
 {% endblock content %}
