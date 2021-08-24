@@ -14,6 +14,11 @@
                 <h5 class="mb-1 d-inline">{{ job.title }}</h5>
                 {% if job.complete %}
                 <span class="badge rounded-pill bg-success">Complete</span>
+                    {% if job.paid %}
+                    <span class="badge rounded-pill bg-success">Paid</span>
+                    {% else %}
+                    <span class="badge rounded-pill bg-danger">Unpaid</span>
+                    {% endif %}
                 {% elif job.in_progress %}
                 <span class="badge rounded-pill bg-warning text-dark">In Progress</span>
                 {% else %}

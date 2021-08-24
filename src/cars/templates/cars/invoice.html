@@ -22,6 +22,7 @@
     <h1>Eastern Racing</h1>
     <hr>
     <h3>Invoice #{{ job.id }}</h3>
+    <h2>To pay: £{{ grand_total|floatformat:2 }}</h2>
     <h4>Customer: <b>{{ job.car.owner }}</b></h4>
     <h4>Car: {{ job.car.model_name }} ({{ job.car.reg }})</h4>
     <h4>Job: {{ job.title }}</h4>
@@ -30,7 +31,7 @@
     <table>
         <thead>
             <tr>
-                <th>Time Unit</th>
+                <th>Work completed</th>
                 <th>Duration</th>
                 <th>Hourly Rate</th>
                 <th>Cost</th>
@@ -99,8 +100,12 @@
         <td>£{{ parts_cost|floatformat:2 }}</td>
     </tr>
     <tr>
-        <td>Grand Total</td>
-        <td>£{{ grand_total|floatformat:2 }}</td>
+        <td>Total (ex. VAT)</td>
+        <td>£{{ sub_total|floatformat:2 }}</td>
+    </tr>
+    <tr>
+        <td><b>Total (inc. VAT)</b></td>
+        <td><b>£{{ grand_total|floatformat:2 }}</b></td>
     </tr>
     </table>
 

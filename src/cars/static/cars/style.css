@@ -1,3 +1,28 @@
 body {
     background-color: #bbb;
 }
+
+#content {
+    margin: 0 2rem 2rem 2rem;
+}
+
+.option {
+    text-decoration: none;
+    padding: 5rem;
+    color: white;
+    background-color: rebeccapurple;
+    display: flex;
+    justify-content: center;
+    max-width: 25vw;
+    font-size: 4rem;
+}
+
+.option:hover {
+    text-decoration: none;
+    background-color: rgb(126, 99, 153);
+    color: black;
+}
+
+.clickable:hover {
+    cursor: pointer;
+}

@@ -57,3 +57,19 @@ class LabourUnit(models.Model):
         #return '{:.2f}'.format(self.time_spent.seconds/3600 * float(self.employee.hourly_rate))
         return self.time_spent.seconds/3600 * float(self.employee.hourly_rate)
 
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.PROTECT, related_name='message_sender')
+    recipient = models.ForeignKey(User, on_delete=models.PROTECT, related_name='message_recipient')
+    car = models.ForeignKey(Car, on_delete=models.PROTECT, null=True, blank=True)
+    job = models.ForeignKey(Job, on_delete=models.PROTECT, null=True, blank=True)
+    subject = models.CharField(max_length=200)
+    body = models.TextField()
+    unread = models.BooleanField(default=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.subject
+
+    # class Meta:
+    #     ordering = ['-unread', '-created']
+

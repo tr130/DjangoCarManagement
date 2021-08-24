@@ -1,0 +1,74 @@
+{% extends 'cars/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<h1>Parts Admin</h1>
+<table class="table table-light table-hover table-bordered">
+    <thead>
+        <tr>
+            <th scope="col">Part name</th>
+            <th class="scope:col">Cost Price</th>
+            <th class="scope:col">Customer Price</th>
+            <th class="scope:col">Stock Level</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for part in parts %}
+        <tr>
+            <th class="scope:row">{{ part.name }} 
+                <a class="btn-sm btn btn-primary" href="{% url 'parts:part-details' part.id %}">Edit</a>
+            </th>
+            <td>£{{ part.cost_price }}</td>
+            <td>£{{ part.customer_price }}</td>
+            <td class="
+                {% if part.stock_level < 5 %}
+                    table-danger
+                {% elif part.stock_level < 10 %}
+                    table-warning
+                {% else %}
+                    table-success
+                {% endif %}
+            ">{{ part.stock_level }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% comment %} <div class="modal fade" id="editPartModal" tabindex="-1" aria-labelledby="editPartModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editPartModalLabel">Add part</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'parts:edit-part' %}" id="edit-part-form" method="post">
+          {% csrf_token %}
+          {{ edit_part_form|crispy }}
+          <button type="submit" class="btn btn-info mt-2">Save</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div> {% endcomment %}
+
+
+{% comment %} <script>
+    const table = document.querySelector('table');
+    console.log(table);
+    table.addEventListener('click', function(e) {
+        console.log('table clicked')
+        if (e.target.className == 'clickable' || e.target.parentNode.className == 'clickable') {
+            console.log('clicked');
+            window.location = `/parts/part_detail/${e.target.parentNode.id}`
+        }
+    })
+</script> {% endcomment %}
+
+{% endblock content %}
+

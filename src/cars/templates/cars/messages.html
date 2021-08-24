@@ -1,0 +1,45 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+<div class="list-group">
+    <h3>Messages</h3>
+    {% for message in messages %}
+    <div class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <div>
+                {% if request.user.id == message.recipient.id %}
+                    <i class="bi bi-arrow-left-square-fill" style="color:orange"></i>
+                {% elif request.user == message.sender %}
+                    <i class="bi bi-arrow-right-square-fill" style="color:blue"></i>
+                {% endif %}
+                <h5 class="mb-1 d-inline">{{ message.subject }}</h5>
+                {% if message.car %}
+                    <a href="{% url 'cars:car-overview' message.car.id %}">{{ message.car.model_name }}({{ message.car.reg }})</a>
+                {% endif %}
+                {% if message.job %}
+                    Job: <a href="{% url 'cars:job-details' message.job.id %}">{{ message.job.title }}</a>
+                {% endif %}
+            </div>
+            <small>{{ message.created }}</small>
+        </div>
+        <p class="mb-1">{{ message.body }}</p>
+        <div class="d-flex w-100 justify-content-between">
+            <small>From: {{ message.sender }}</small>
+            <small>To: {{ message.recipient }}</small>
+            {% if message.unread %}
+                <span class="badge rounded-pill bg-danger">Unread</span>
+            {% else %}
+                <span class="badge rounded-pill bg-success">Read</span>
+            {% endif %}
+        </div>
+        {% if request.user == message.recipient and message.unread %}
+            <form action="{% url 'cars:message-read' %}" method="POST">
+            {% csrf_token %}
+                <input type="hidden" name="message_id" value="{{ message.id }}">
+                <button class="btn-primary btn-sm">Mark as read.</button>
+            </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

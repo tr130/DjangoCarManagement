@@ -1,0 +1,14 @@
+{% extends 'cars/base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    {{ part.name }}
+    <form action="{% url 'parts:edit-part' %}" id="edit-part-form" method="post">
+          {% csrf_token %}
+          {{ part_form|crispy }}
+          <input type="hidden" name="part_id" value="{{ part.id }}">
+          <button type="submit" class="btn btn-info mt-2">Save</button>
+    </form>
+{% endblock content %}
+

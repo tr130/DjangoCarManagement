@@ -1,5 +1,5 @@
 from django import forms
-from .models import Job, LabourUnit, PartUnit
+from .models import Job, LabourUnit, Message, PartUnit
 
 class JobForm(forms.ModelForm):
     class Meta:
@@ -25,4 +25,16 @@ class PartUnitForm(forms.ModelForm):
         widgets = {
             'added_by': forms.HiddenInput(),
             'job': forms.HiddenInput(),
+        }
+
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ('sender', 'recipient', 'car', 'job', 'subject', 'body')
+        widgets = {
+            'sender': forms.HiddenInput(),
+            'recipient': forms.HiddenInput(),
+            'car': forms.HiddenInput(),
+            'job': forms.HiddenInput(),
+            'body': forms.Textarea(attrs={'rows':'5'})
         }
