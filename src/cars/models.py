@@ -34,14 +34,18 @@ class Job(models.Model):
 class PartUnit(models.Model):
     part = models.ForeignKey(Part, on_delete=models.PROTECT)
     quantity = models.IntegerField()
+    cost_each = models.DecimalField(max_digits=10, decimal_places=2,)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     added_by = models.ForeignKey(Employee, on_delete=models.PROTECT)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
 
     def __str__(self):
         return f"{self.job.car.reg} - {self.part} x {self.quantity}"
 
-    def get_cost(self):
-        return self.part.customer_price * self.quantity
+    def save(self):
+        self.cost_each = self.part.customer_price
+        self.total_cost = self.cost_each * self.quantity
+        return super().save()
 
 class LabourUnit(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT)
