@@ -7,12 +7,12 @@
 
 
 <div class="list-group">
-    {% for job in invoices %}
+    {% for invoice in invoices %}
     <div class="list-group-item list-group-item-action">
         <div class="d-flex w-100 justify-content-between">
             <div>
-                <h5 class="mb-1 d-inline">{{ job.title }}</h5>
-                {% if job.paid %}
+                <h5 class="mb-1 d-inline">{{ invoice.job.title }}</h5>
+                {% if invoice.job.paid %}
                 <span class="badge rounded-pill bg-success">Paid</span>
                 {% else %}
                 <span class="badge rounded-pill bg-danger">Unpaid</span>
@@ -20,17 +20,17 @@
             </div>
 
         </div>
-        <p class="mb-1">{{ job.car.reg }} - {{ job.car.model_name }}</p>
+        <p class="mb-1">{{ invoice.job.car.reg }} - {{ invoice.job.car.model_name }}</p>
         <div class="d-flex w-100 justify-content-between">
             <div>
-                <a href="{% url 'cars:invoice-details' job.id %}" class="btn btn-primary">Details</a>
-                <a href="{% url 'cars:invoice-pdf' job.id %}" class="btn btn-primary">View as PDF</a>
-                {% if job.paid %}
-                <a href="{% url 'cars:receipt-pdf' job.id %}" class="btn btn-primary">View Receipt</a>
+                <a href="{% url 'cars:invoice-details' invoice.job.id %}" class="btn btn-primary">Details</a>
+                <a href="{% url 'cars:invoice-pdf' invoice.job.id %}" class="btn btn-primary">View as PDF</a>
+                {% if invoice.job.paid %}
+                <a href="{% url 'cars:receipt-pdf' invoice.job.id %}" class="btn btn-primary">View Receipt</a>
                 {% endif %}
             </div>
             <small>
-                Invoice raised on: <b>{{ job.updated|date }}</b>
+                Invoice raised on: <b>{{ invoice.job.updated|date }}</b>
             </small>
         </div>
     </div>

@@ -27,9 +27,36 @@ class Job(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     expected_complete = models.DateTimeField(blank=True)
+    invoiced = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
+
+class Invoice(models.Model):
+    job = models.OneToOneField(Job, on_delete=models.PROTECT)
+    created = models.DateTimeField(auto_now_add=True)
+    time_spent = models.DurationField(default=timedelta())
+    labour_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    parts_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    sub_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    vat = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    grand_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def save(self):
+        self.time_spent = timedelta(hours= 0, minutes=0)
+        for labour_unit in self.job.labourunit_set.all():
+            self.time_spent += labour_unit.time_spent
+            self.labour_cost += labour_unit.total_cost
+        for part_unit in self.job.partunit_set.all():
+            self.parts_cost += part_unit.total_cost
+        self.sub_total = self.labour_cost + self.parts_cost
+        self.vat = float(self.sub_total) * 0.2
+        self.grand_total = float(self.sub_total) + self.vat
+        self.job.invoiced = True
+        return super().save()
+
+    def __str__(self):
+        return f"{self.job.title} - {self.job.car.reg}"
 
 class PartUnit(models.Model):
     part = models.ForeignKey(Part, on_delete=models.PROTECT)
@@ -52,14 +79,17 @@ class LabourUnit(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     description = models.TextField()
     time_spent = models.DurationField(default=timedelta())
+    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2)
     created = models.DateTimeField(auto_now_add=True)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True)
 
     def __str__(self):
         return f"{self.job.car.reg} - {self.job} - {self.time_spent}"
 
-    def get_cost(self):
-        #return '{:.2f}'.format(self.time_spent.seconds/3600 * float(self.employee.hourly_rate))
-        return self.time_spent.seconds/3600 * float(self.employee.hourly_rate)
+    def save(self):
+        self.hourly_rate = self.employee.hourly_rate
+        self.total_cost = self.time_spent.seconds/3600 * float(self.hourly_rate)
+        return super().save()
 
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.PROTECT, related_name='message_sender')

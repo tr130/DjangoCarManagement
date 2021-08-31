@@ -1,74 +1,90 @@
 {% extends 'cars/base.html' %}
 
 {% load crispy_forms_tags %}
+{% load parts_extras %}
 
 {% block content %}
 
-<h1>Parts Admin</h1>
+<div class="d-flex justify-content-between">
+<h1>Parts Admin {{ request.session.parts_order }}</h1>
+<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+  Order{% if request.session.parts_order %}
+    <span class="badge bg-danger">{{ request.session.parts_order|length }}</span>
+  {% endif %}</button>
+</div>
 <table class="table table-light table-hover table-bordered">
-    <thead>
-        <tr>
-            <th scope="col">Part name</th>
-            <th class="scope:col">Cost Price</th>
-            <th class="scope:col">Customer Price</th>
-            <th class="scope:col">Stock Level</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for part in parts %}
-        <tr>
-            <th class="scope:row">{{ part.name }} 
-                <a class="btn-sm btn btn-primary" href="{% url 'parts:part-details' part.id %}">Edit</a>
-            </th>
-            <td>£{{ part.cost_price }}</td>
-            <td>£{{ part.customer_price }}</td>
-            <td class="
-                {% if part.stock_level < 5 %}
-                    table-danger
-                {% elif part.stock_level < 10 %}
-                    table-warning
-                {% else %}
-                    table-success
-                {% endif %}
-            ">{{ part.stock_level }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+  <thead>
+    <tr>
+      <th scope="col">Part name</th>
+      <th class="scope:col">Cost Price</th>
+      <th class="scope:col">Customer Price</th>
+      <th class="scope:col">Stock Level</th>
+      <th class="scope:col">Order</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for part in parts %}
+    <tr>
+      <th class="scope:row">
+        <a class="btn-sm btn btn-primary" href="{% url 'parts:part-details' part.id %}">Edit</a>
+        {{ part.name }}
+      </th>
+      <td>£{{ part.cost_price }}</td>
+      <td>£{{ part.customer_price }}</td>
+      <td class="
+          {% if part.stock_level < 5 %}
+              table-danger
+          {% elif part.stock_level < 10 %}
+              table-warning
+          {% else %}
+              table-success
+          {% endif %}
+        ">{{ part.stock_level }}</td>
+      <td><form action="{% url 'parts:add-part-to-order' %}" method="post">
+      {% csrf_token %}
+        <input type="number" name="quantity" min="0" value="{{ request.session.parts_order|get_quantity:part.id }}">
+        <input type="hidden" name="part_id" value="{{ part.id }}">
+        <input type="hidden" name="part_name" value="{{ part.name }}">
+        <input type="hidden" name="part_cost" value="{{ part.cost_price }}">
+        <input type="submit" value="Order">
+      </form></td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 
-{% comment %} <div class="modal fade" id="editPartModal" tabindex="-1" aria-labelledby="editPartModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editPartModalLabel">Add part</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form action="{% url 'parts:edit-part' %}" id="edit-part-form" method="post">
-          {% csrf_token %}
-          {{ edit_part_form|crispy }}
-          <button type="submit" class="btn btn-info mt-2">Save</button>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <h5 id="offcanvasRightLabel">Offcanvas right</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
-</div> {% endcomment %}
+  <div class="offcanvas-body">
+    <div class="list-group">
+           {% for part in request.session.parts_order.values %}
+            <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ part.name }}</h5>
+              </div>
+              <p class="mb-1">{{ part.quantity }} @ £{{ part.cost|floatformat:2}}</p>
+            </a>
+           {% endfor %}
+          </div>
+  </div>
+</div>
+
 
 
 {% comment %} <script>
-    const table = document.querySelector('table');
-    console.log(table);
-    table.addEventListener('click', function(e) {
-        console.log('table clicked')
-        if (e.target.className == 'clickable' || e.target.parentNode.className == 'clickable') {
-            console.log('clicked');
-            window.location = `/parts/part_detail/${e.target.parentNode.id}`
-        }
-    })
+  const table = document.querySelector('table');
+  console.log(table);
+  table.addEventListener('click', function (e) {
+    console.log('table clicked')
+    if (e.target.className == 'clickable' || e.target.parentNode.className == 'clickable') {
+      console.log('clicked');
+      window.location = `/parts/part_detail/${e.target.parentNode.id}`
+    }
+  })
 </script> {% endcomment %}
 
 {% endblock content %}
-

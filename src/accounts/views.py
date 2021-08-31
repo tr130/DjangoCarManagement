@@ -18,6 +18,12 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
+                if request.user.groups.first():
+                    request.session['role'] = request.user.groups.first().name
+                else:
+                    request.session['role'] = None
+                if request.session['role'] == 'Manager':
+                    request.session['parts_order'] = {}
                 if request.GET.get('next'):
                     return redirect(request.GET.get('next'))
                 else:

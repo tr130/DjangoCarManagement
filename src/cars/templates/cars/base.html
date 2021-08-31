@@ -26,10 +26,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-
                     {% if role == 'Employee' %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -45,22 +41,49 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="{% url 'cars:home' %}">See all</a></li>
+                            <li><a class="dropdown-item" href="{% url 'cars:job-list' %}">See all</a></li>
                         </ul>
                     </li>
                     {% elif role == 'Customer' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            My Cars
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            {% for car in request.user.customer.car_set.all %}
+                                <li><a class="dropdown-item" href="{% url 'cars:car-overview' car.id %}">{{ car.model_name }} ({{ car.reg }})</a></li>
+                            {% endfor %}
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="{% url 'cars:car-list' %}">See all</a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="{% url 'cars:invoice-list' user.customer.id %}">My Invoices 
+                        <a class="nav-link" aria-current="page" href="{% url 'cars:invoice-list' %}">My Invoices 
                             {% if unpaid %}
                                 <span class="badge bg-danger">{{ unpaid }}</span>
                             {% endif %}
                         </a>
                     </li>
+                    {% elif role == 'Manager' %}
+                    <li class="nav-item">
+                        <a href="{% url 'cars:job-list' %}" aria-current="page" class="nav-link">Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'cars:car-list' %}" aria-current="page" class="nav-link">Cars</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'parts:parts-admin' %}" aria-current="page" class="nav-link">Parts</a>
+                    </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a href="{% url 'cars:message-list' %}" aria-current="page" class="nav-link">My messages</a>
+                        <a href="{% url 'cars:message-list' %}" aria-current="page" class="nav-link">My messages
+                            {% if unread %}
+                                <span class="badge bg-danger">{{ unread }}</span>
+                            {% endif %}</a>
                     </li>
-                    
                 </ul>
                 {% if request.user.is_authenticated %}
                     {{ request.user.first_name }} {{ request.user.last_name }}

@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice {{ job.id }}</title>
+    <title>Invoice {{ invoice.job.id }}</title>
     <style>
         table, th, td {
             border: 1px solid black;
@@ -21,33 +21,37 @@
 <body>
     <h1>Eastern Racing</h1>
     <hr>
-    <h3>Receipt #{{ job.id }}</h3>
+    <h3>Receipt #{{ invoice.job.id }}</h3>
     <h1>PAID</h1>
-    <h4>Customer: <b>{{ job.car.owner }}</b></h4>
-    <h4>Car: {{ job.car.model_name }} ({{ job.car.reg }})</h4>
-    <h4>Job: {{ job.title }}</h4>
-    <h4>Date: {{ job.updated|date }}</h4>
+    <h4>Customer: <b>{{ invoice.job.car.owner }}</b></h4>
+    <h4>Car: {{ invoice.job.car.model_name }} ({{ invoice.job.car.reg }})</h4>
+    <h4>Job: {{ invoice.job.title }}</h4>
+    <h4>Date: {{ invoice.job.updated|date }}</h4>
     <hr>
     <table>
     <tr>
         <td>Labour</td>
-        <td>£{{ labour_cost|floatformat:2 }}</td>
+        <td>£{{ invoice.labour_cost|floatformat:2 }}</td>
     </tr>
     <tr>
         <td>Parts</td>
-        <td>£{{ parts_cost|floatformat:2 }}</td>
+        <td>£{{ invoice.parts_cost|floatformat:2 }}</td>
     </tr>
     <tr>
         <td>Total (ex. VAT)</td>
-        <td>£{{ sub_total|floatformat:2 }}</td>
+        <td>£{{ invoice.sub_total|floatformat:2 }}</td>
+    </tr>
+    <tr>
+        <td>VAT</td>
+        <td>£{{ invoice.vat|floatformat:2 }}</td>
     </tr>
     <tr>
         <td><b>Total (inc. VAT)</b></td>
-        <td><b>£{{ grand_total|floatformat:2 }}</b></td>
+        <td><b>£{{ invoice.grand_total|floatformat:2 }}</b></td>
     </tr>
     </table>
 
-    <h1>£{{ grand_total|floatformat:2 }} received with thanks.</h1>
+    <h1>£{{ invoice.grand_total|floatformat:2 }} received with thanks.</h1>
 
 </body>
 </html>

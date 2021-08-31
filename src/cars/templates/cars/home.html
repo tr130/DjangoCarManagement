@@ -16,6 +16,14 @@
         Parts
     </a>
 {% endif %}
+{% if role == 'Customer' %}
+    <a href="{% url 'cars:invoice-list' %}" class="option">
+        Invoices
+    </a>
+{% endif %}
+<a href="{% url 'cars:message-list' %}" class="option">
+    Messages
+</a>
 
 
 {% endblock content %}

@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice {{ job.id }}</title>
+    <title>Invoice {{ invoice.job.id }}</title>
     <style>
         table, th, td {
             border: 1px solid black;
@@ -21,12 +21,12 @@
 <body>
     <h1>Eastern Racing</h1>
     <hr>
-    <h3>Invoice #{{ job.id }}</h3>
-    <h2>To pay: £{{ grand_total|floatformat:2 }}</h2>
-    <h4>Customer: <b>{{ job.car.owner }}</b></h4>
-    <h4>Car: {{ job.car.model_name }} ({{ job.car.reg }})</h4>
-    <h4>Job: {{ job.title }}</h4>
-    <h4>Date: {{ job.updated|date }}</h4>
+    <h3>Invoice #{{ invoice.job.id }}</h3>
+    <h2>To pay: £{{ invoice.grand_total|floatformat:2 }}</h2>
+    <h4>Customer: <b>{{ invoice.job.car.owner }}</b></h4>
+    <h4>Car: {{ invoice.job.car.model_name }} ({{ invoice.job.car.reg }})</h4>
+    <h4>Job: {{ invoice.job.title }}</h4>
+    <h4>Date: {{ invoice.created|date }}</h4>
     <hr>
     <table>
         <thead>
@@ -38,21 +38,21 @@
             </tr>
         </thead>
         <tbody>
-            {% for labour_unit in job.labourunit_set.all %}
+            {% for labour_unit in invoice.job.labourunit_set.all %}
             <tr>
                 <td>{{ labour_unit.description }}</td>
                 <td>{{ labour_unit.time_spent|duration }}</td>
-                <td>£{{ labour_unit.employee.hourly_rate }}/hour</td>
-                <td>£{{ labour_unit.get_cost|floatformat:2 }}</td>
+                <td>£{{ labour_unit.hourly_rate }}/hour</td>
+                <td>£{{ labour_unit.total_cost|floatformat:2 }}</td>
             </tr>
             {% endfor %}
         </tbody>
         <tfoot>
             <tr>
                 <td>Total Cost</td>
-                <td>{{ time_spent|duration }}</td>
+                <td>{{ invoice.time_spent|duration }}</td>
                 <td>------</td>
-                <td>£{{ labour_cost|floatformat:2 }}</td>
+                <td>£{{ invoice.labour_cost|floatformat:2 }}</td>
             </tr>
         </tfoot>
     </table>
@@ -69,12 +69,12 @@
             </tr>
         </thead>
         <tbody>
-            {% for part_unit in job.partunit_set.all %}
+            {% for part_unit in invoice.job.partunit_set.all %}
             <tr>
                 <td>{{ part_unit.part.name }}</td>
                 <td>{{ part_unit.quantity }}</td>
-                <td>£{{ part_unit.part.customer_price }}</td>
-                <td>£{{ part_unit.get_cost|floatformat:2 }}</td>
+                <td>£{{ part_unit.cost_each }}</td>
+                <td>£{{ part_unit.total_cost|floatformat:2 }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -83,7 +83,7 @@
                 <td>Total Cost</td>
                 <td>------</td>
                 <td>------</td>
-                <td>£{{ parts_cost|floatformat:2 }}</td>
+                <td>£{{ invoice.parts_cost|floatformat:2 }}</td>
             </tr>
         </tfoot>
     </table>
@@ -93,19 +93,23 @@
     <table>
     <tr>
         <td>Labour</td>
-        <td>£{{ labour_cost|floatformat:2 }}</td>
+        <td>£{{ invoice.labour_cost|floatformat:2 }}</td>
     </tr>
     <tr>
         <td>Parts</td>
-        <td>£{{ parts_cost|floatformat:2 }}</td>
+        <td>£{{ invoice.parts_cost|floatformat:2 }}</td>
     </tr>
     <tr>
         <td>Total (ex. VAT)</td>
-        <td>£{{ sub_total|floatformat:2 }}</td>
+        <td>£{{ invoice.sub_total|floatformat:2 }}</td>
+    </tr>
+    <tr>
+        <td>VAT</td>
+        <td>£{{ invoice.vat|floatformat:2 }}</td>
     </tr>
     <tr>
         <td><b>Total (inc. VAT)</b></td>
-        <td><b>£{{ grand_total|floatformat:2 }}</b></td>
+        <td><b>£{{ invoice.grand_total|floatformat:2 }}</b></td>
     </tr>
     </table>
 

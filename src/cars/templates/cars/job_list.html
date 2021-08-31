@@ -12,17 +12,19 @@
         <div class="d-flex w-100 justify-content-between">
             <div>
                 <h5 class="mb-1 d-inline">{{ job.title }}</h5>
-                {% if job.complete %}
-                <span class="badge rounded-pill bg-success">Complete</span>
+                {% if job.invoiced %}  
+                    <span class="badge rounded-pill bg-primary">Invoiced</span>
                     {% if job.paid %}
-                    <span class="badge rounded-pill bg-success">Paid</span>
+                        <span class="badge rounded-pill bg-success">Paid</span>
                     {% else %}
-                    <span class="badge rounded-pill bg-danger">Unpaid</span>
+                        <span class="badge rounded-pill bg-danger">Unpaid</span>
                     {% endif %}
+                {% elif job.complete %}
+                    <span class="badge rounded-pill bg-success">Complete</span>
                 {% elif job.in_progress %}
-                <span class="badge rounded-pill bg-warning text-dark">In Progress</span>
+                    <span class="badge rounded-pill bg-warning text-dark">In Progress</span>
                 {% else %}
-                <span class="badge rounded-pill bg-danger">Not Started</span>
+                    <span class="badge rounded-pill bg-danger">Not Started</span>
                 {% endif %}
             </div>
 

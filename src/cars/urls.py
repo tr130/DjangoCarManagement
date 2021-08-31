@@ -15,9 +15,10 @@ urlpatterns = [
     path('message_read/', views.mark_message_as_read, name='message-read'),
     path('send_message/', views.send_message, name='send-message'),
     path('assign_message_to_job/', views.assign_message_to_job, name='assign-message-to-job'),
+    path('generate_invoice/<str:pk>', views.generate_invoice, name='generate-invoice'),
     path('invoice_pdf/<str:pk>', views.invoice_pdf, name='invoice-pdf'),
     path('invoice_details/<str:pk>', views.invoice_details, name='invoice-details'),
-    path('invoice_list/<str:pk>', views.invoice_list, name='invoice-list'),
+    path('invoice_list/', views.invoice_list, name='invoice-list'),
     path('receipt/<str:pk>', views.receipt_pdf, name="receipt-pdf"),
     path('<str:pk>/', views.car_overview, name='car-overview'),
 ]

@@ -50,19 +50,19 @@
           <p>{{ job.description }}</p>
         </li>
       </ul>
-      {% if role != 'Customer' and not job.paid %}
+      {% if role != 'Customer' and not job.invoiced %}
       {% if job.complete %}
       <a type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#completeModal">
         Mark as incomplete
       </a>
+        {% if role == 'Manager' %}
+        <a href="{% url 'cars:generate-invoice' job.id %}" class="btn btn-success">Generate Invoice</a>
+        {% endif %}
       {% else %}
       <a type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#completeModal">
         Mark as complete
       </a>
       {% endif %}
-      {% endif %}
-      {% if job.complete %}
-      <a href="{% url 'cars:invoice-pdf' job.id %}" class="btn btn-primary">View Invoice as PDF</a>
       {% endif %}
     </div>
     <div class="col-4">
@@ -147,13 +147,14 @@
           <small>Total cost:
             <b>£{{ part_unit.total_cost }}</b>
           </small>
-          <form action="{% url 'cars:remove-part-unit' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="part_unit" value="{{ part_unit.id }}">
-            <button type="submit" class="btn-danger btn"><i class="bi bi-trash-fill"></i></button>
-          </form>
+          {% if role != 'Customer' %}
+            <form action="{% url 'cars:remove-part-unit' %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="part_unit" value="{{ part_unit.id }}">
+              <button type="submit" class="btn-danger btn"><i class="bi bi-trash-fill"></i></button>
+            </form>
+          {% endif %}
           </div>
-          
         </li>
         {% endfor %}
       </ul>
