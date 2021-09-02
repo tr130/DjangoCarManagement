@@ -191,7 +191,6 @@ def add_part_unit(request):
         return redirect('cars:home')
 
 def remove_part_unit(request):
-    print(request.POST)
     error = None
     try:
         part_unit = PartUnit.objects.get(id=request.POST['part_unit'])

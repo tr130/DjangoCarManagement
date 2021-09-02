@@ -1,0 +1,85 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+<h1>Place Parts Order</h1>
+<div class="row">
+    <div class="list-group col-6">
+        {% for part, values in request.session.parts_order.items %}
+        <div class="list-group-item list-group-item-action" aria-current="true">
+            <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ values.name }}</h5>
+            <div class="d-flex">
+                <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{part}}" aria-expanded="false" aria-controls="collapseExample">
+                    Edit
+                </button>
+            </div>
+            
+            </div>
+            <p class="mb-1">
+            <span class="order_quant">{{ values.quantity }}</span> @ 
+            £<span class="part_cost">{{ values.cost|floatformat:2}}</span> = 
+            £<span class="part_subtotal"></span></p>
+            <div class="collapse" id="collapse-{{part}}">
+                <div class="card card-body">
+                    <form action="{% url 'parts:update-part-in-order' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="part_id" value={{ part }}>
+                        <input type="number" name="quantity" min="0" value="{{ values.quantity }}">
+                        <button type="submit" class="btn-warning btn">Update Quantity</button>
+                    </form>
+                    <form action="{% url 'parts:remove-part-from-order' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="part_id" value="{{ part }}">
+                        <button type="submit" class="btn-danger btn">Remove <i class="bi bi-trash-fill"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+    </div>
+    <div class="col-6">
+    <div class="list-group-item list-group-item-action list-group-item-dark" aria-current="true">
+            <div class="d-flex w-100 justify-content-between">
+            <h4 class="mb-1">Total (ex. VAT)</h4>
+            </div>
+            <h5 class="mb-1" id="parts_order_subtotal"></h5>
+        </div>
+        <div class="list-group-item list-group-item-action list-group-item-dark" aria-current="true">
+            <div class="d-flex w-100 justify-content-between">
+            <h4 class="mb-1">VAT</h4>
+            </div>
+            <h5 class="mb-1" id="parts_order_vat"></h5>
+        </div>
+        <div class="list-group-item list-group-item-action list-group-item-dark" aria-current="true">
+            <div class="d-flex w-100 justify-content-between">
+            <h4 class="mb-1">Total (inc. VAT)</h4>
+            </div>
+            <h5 class="mb-1" id="parts_order_grandtotal"></h5>
+        </div>
+        <form action="{% url 'parts:order-parts' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="w-100 btn btn-success pt-3 pb-3"><h4>Pay <span id="pay_total"></span></h4></button>
+        </form>
+        
+    </div>
+</div>
+
+
+<script defer="true">
+  const quantities = document.getElementsByClassName('order_quant');
+  const partCosts = document.getElementsByClassName('part_cost');
+  const partSubtotals = document.getElementsByClassName('part_subtotal');
+  let subtotal = 0.00
+  for (let i = 0; i < quantities.length; i++) {
+    partSubtotal = quantities[i].textContent * partCosts[i].textContent
+    partSubtotals[i].textContent = partSubtotal.toFixed(2)
+    subtotal += partSubtotal
+  }
+  document.getElementById('parts_order_subtotal').textContent = '£' + subtotal.toFixed(2)
+  document.getElementById('parts_order_vat').textContent = '£' + (subtotal * 0.2).toFixed(2)
+  document.getElementById('parts_order_grandtotal').textContent = '£' + (subtotal * 1.2).toFixed(2)
+  document.getElementById('pay_total').textContent = '£' + (subtotal * 1.2).toFixed(2)
+</script>
+
+{% endblock content %}

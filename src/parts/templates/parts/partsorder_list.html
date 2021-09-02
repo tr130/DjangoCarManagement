@@ -1,0 +1,44 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+<h1>Parts Orders</h1>
+
+<div class="list-group">
+    {% for order in partsorder_list %}
+    <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#collapse-{{ order.id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+        <div class="d-flex w-100 justify-content-between">
+            <div>
+                <h5 class="mb-1 d-inline">{{ order.placed }}</h5>
+                {% if order.get_delivery_status == 'awaiting' %}
+                    <span class="badge rounded-pill bg-danger">Awaiting Delivery</span>
+                {% elif order.get_delivery_status == 'delivered' %}
+                    <span class="badge rounded-pill bg-success">Delivered</span>
+                {% else %}
+                    <span class="badge rounded-pill bg-warning">Part Delivered</span>
+                {% endif %}
+            </div>
+        </div>
+        <p class="mb-1">{{ order.sub_total }}</p>
+        <div class="d-flex w-100 justify-content-between">
+            <small>{{ order.grand_total }}</small>
+        </div>
+    </a>
+    <div class="collapse" id="collapse-{{ order.id }}">
+  <div class="card card-body d-flex flex-row justify-content-between">
+    <ul>{% for unit in order.partsorderunit_set.all %}
+        <li>
+            {{ unit }}
+            {% if unit.checked_in %}
+                <i class="bi bi-check-lg text-success"></i>
+            {% else %}
+                <i class="bi bi-hourglass-split text-danger"></i>
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+    <a href="{% url 'parts:parts-order-detail' order.id %}" class="btn btn-success d-flex align-items-center justify-content-center w-50"><h2>Check in</h2></a>
+  </div></div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

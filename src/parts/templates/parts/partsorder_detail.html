@@ -1,0 +1,88 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+
+<div class="card mb-5">
+  <div class="card-header">
+    <h1>
+      <a href="{% url 'parts:parts-order-list' %}"><i class="bi bi-chevron-left"></i></a>
+      Parts Order Details: Order #{{ partsorder.id }}
+      {% if partsorder.get_delivery_status == 'awaiting' %}
+          <span class="badge rounded-pill bg-danger">Awaiting Delivery</span>
+      {% elif partsorder.get_delivery_status == 'delivered' %}
+          <span class="badge rounded-pill bg-success">Delivered</span>
+      {% else %}
+          <span class="badge rounded-pill bg-warning">Part Delivered</span>
+      {% endif %}
+    </h1>
+  </div>
+  <div class="card-body row">
+    <div class="col-6">
+      <h4 class="card-title">Parts</h4>
+      <ul class="list-group list-group-flush">
+        {% for part_unit in partsorder.partsorderunit_set.all %}
+        <li class="list-group-item">
+          <b class="card-title">{{ part_unit.part.name }}</b>
+          {% if part_unit.checked_in %}
+          <span class="badge rounded-pill bg-success">Checked in</span>
+          {% else %}
+          <span class="badge rounded-pill bg-danger">Awaiting Delivery</span>
+          {% endif %}
+          <p>{{ part_unit.quantity }} @ £{{ part_unit.cost_each }}</p>
+          <div class="d-flex justify-content-between">
+            <small>Total cost:
+              <b>£{{ part_unit.total_cost }}</b>
+            </small>
+            {% if not part_unit.checked_in %}
+            <a type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#checkinModal{{ part_unit.id }}">Check in</a>
+            <div class="modal fade" id="checkinModal{{ part_unit.id }}" tabindex="-1" aria-labelledby="checkinModal{{ part_unit.id }}Label"
+          aria-hidden="true">
+          <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="checkinModal{{ part_unit.id }}Label">Confirm check-in of:</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>{{ part_unit.quantity }} x {{ part_unit.part.name }}</p>
+                <b>Confirm that part has been received in correct quantity and condition?</b>
+                <hr>
+                <form action="{% url 'parts:check-in-parts-order-unit' %}" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="parts_order_unit" value="{{ part_unit.id }}">
+                  <button type="submit" class="btn-success btn">Yes</button>
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+            {% endif %}
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="col-6">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between">
+          <p>Order placed on: </p>
+          <p><b>{{ partsorder.placed|date:"D d/m/y H:i" }}</b></p>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <p>Total (ex. VAT)</p>
+          <p><b>£{{ partsorder.sub_total|floatformat:2 }}</b></p>
+        </li>
+        <li class="list-group-item d-flex justify-content-between">
+          <p>VAT</p>
+          <p><b>£{{ partsorder.vat|floatformat:2 }}</b></p>
+        </li>
+        <li style="outline:2px solid black" class="list-group-item d-flex justify-content-between">
+          <p class='m-1'>Total (inc. VAT)</p>
+          <p class='m-1'><b>£{{ partsorder.grand_total|floatformat:2 }}</b></p>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  {% endblock content %}

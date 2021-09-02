@@ -5,8 +5,22 @@
 
 {% block content %}
 
+<!-- ==== FLASH MESSAGES ==== -->
+
+{% if messages %}
+<div class="messages">
+  {% for message in messages %}
+  <div class="alert alert-danger mb-0 text-center" role="alert">
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- ==== -->
+
 <div class="d-flex justify-content-between">
-<h1>Parts Admin {{ request.session.parts_order }}</h1>
+<h1>Parts Admin</h1>
 <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
   Order{% if request.session.parts_order %}
     <span class="badge bg-danger">{{ request.session.parts_order|length }}</span>
@@ -15,7 +29,9 @@
 <table class="table table-light table-hover table-bordered">
   <thead>
     <tr>
-      <th scope="col">Part name</th>
+      <th scope="col">Part name <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#partModal">
+        Add part
+      </a></th>
       <th class="scope:col">Cost Price</th>
       <th class="scope:col">Customer Price</th>
       <th class="scope:col">Stock Level</th>
@@ -42,11 +58,17 @@
         ">{{ part.stock_level }}</td>
       <td><form action="{% url 'parts:add-part-to-order' %}" method="post">
       {% csrf_token %}
-        <input type="number" name="quantity" min="0" value="{{ request.session.parts_order|get_quantity:part.id }}">
         <input type="hidden" name="part_id" value="{{ part.id }}">
         <input type="hidden" name="part_name" value="{{ part.name }}">
         <input type="hidden" name="part_cost" value="{{ part.cost_price }}">
-        <input type="submit" value="Order">
+        {% if part.id|stringformat:'s' in request.session.parts_order.keys %}
+          <input type="number" name="quantity" min="0" value="{{ request.session.parts_order|get_quantity:part.id }}">
+          <input type="submit" value="Update Quantity">
+        {% else %}
+          <input type="number" name="quantity" min="0" value="0">
+          <input type="submit" value="Add to Order">
+        {% endif %}
+        
       </form></td>
     </tr>
     {% endfor %}
@@ -56,35 +78,72 @@
 
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
   <div class="offcanvas-header">
-    <h5 id="offcanvasRightLabel">Offcanvas right</h5>
+    <h5 id="offcanvasRightLabel">Order Summary</h5>
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
     <div class="list-group">
-           {% for part in request.session.parts_order.values %}
-            <a href="#" class="list-group-item list-group-item-action" aria-current="true">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ part.name }}</h5>
-              </div>
-              <p class="mb-1">{{ part.quantity }} @ £{{ part.cost|floatformat:2}}</p>
-            </a>
-           {% endfor %}
-          </div>
+      {% for part,values in request.session.parts_order.items %}
+      <div class="list-group-item list-group-item-action" aria-current="true">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{ values.name }}</h5>
+          <form action="{% url 'parts:remove-part-from-order' %}" method="post">
+              {% csrf_token %}
+              <input type="hidden" name="part_id" value="{{ part }}">
+              <button type="submit" class="btn-danger btn"><i class="bi bi-trash-fill"></i></button>
+            </form>
+        </div>
+        <p class="mb-1">
+          <span class="order_quant">{{ values.quantity }}</span> @ 
+          £<span class="part_cost">{{ values.cost|floatformat:2}}</span> = 
+          £<span class="part_subtotal"></span></p>
+      </div>
+      {% endfor %}
+      <div class="list-group-item list-group-item-action list-group-item-dark" aria-current="true">
+        <div class="d-flex w-100 justify-content-between">
+          <h4 class="mb-1">Total (ex. VAT)</h4>
+        </div>
+        <h5 class="mb-1" id="parts_order_total"></h5>
+      </div>
+      <a href="{% url 'parts:order-parts' %}"class="list-group-item list-group-item-action list-group-item-success" aria-current="true">
+          <h2 class="mb-1">Place Order <i class="bi bi-chevron-right"></i></h2>
+      </a>
+    </div>
   </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="partModal" tabindex="-1" aria-labelledby="partModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="partModalLabel">Add part</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'parts:add-part' %}" id="part-form" method="post">
+          {% csrf_token %}
+          {{ part_form|crispy }}
+          <input type="hidden" name="unit" value="part">
+          <button type="submit" class="btn btn-info mt-2">Save</button>
+          <button type="button" class="btn btn-danger mt-2" data-bs-dismiss="modal">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
-
-{% comment %} <script>
-  const table = document.querySelector('table');
-  console.log(table);
-  table.addEventListener('click', function (e) {
-    console.log('table clicked')
-    if (e.target.className == 'clickable' || e.target.parentNode.className == 'clickable') {
-      console.log('clicked');
-      window.location = `/parts/part_detail/${e.target.parentNode.id}`
-    }
-  })
-</script> {% endcomment %}
+<script defer="true">
+  const quantities = document.getElementsByClassName('order_quant');
+  const partCosts = document.getElementsByClassName('part_cost');
+  const partSubtotals = document.getElementsByClassName('part_subtotal');
+  let total = 0.00
+  for (let i = 0; i < quantities.length; i++) {
+    partSubtotal = quantities[i].textContent * partCosts[i].textContent
+    partSubtotals[i].textContent = partSubtotal.toFixed(2)
+    total += partSubtotal
+  }
+  document.getElementById('parts_order_total').textContent = '£' + total.toFixed(2)
+</script>
 
 {% endblock content %}
