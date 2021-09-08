@@ -1,5 +1,5 @@
 from django.db import models
-from parts.models import Part
+from parts.models import Part, PartsOrderUnit
 from accounts.models import User, Employee, Customer, Manager
 from datetime import timedelta, datetime
 
@@ -104,6 +104,12 @@ class Message(models.Model):
     def __str__(self):
         return self.subject
 
-    # class Meta:
-    #     ordering = ['-unread', '-created']
-
+class PartRequest(models.Model):
+    part = models.ForeignKey(Part, on_delete=models.PROTECT, blank=True)
+    requested_by = models.ForeignKey(User, on_delete=models.PROTECT)
+    assigned_to = models.ForeignKey(Manager, on_delete=models.PROTECT)
+    job = models.ForeignKey(Job, on_delete=models.PROTECT, blank=True)
+    quantity = models.IntegerField()
+    notes = models.TextField(blank=True)
+    on_order = models.BooleanField(default=False)
+    requested = models.DateTimeField(auto_now_add=True)

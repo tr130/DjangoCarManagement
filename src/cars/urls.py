@@ -11,6 +11,7 @@ urlpatterns = [
     path('car_list/', views.car_list, name='car-list'),
     path('add_part_unit/', views.add_part_unit, name='add-part-unit'),
     path('remove_part_unit/', views.remove_part_unit, name='remove-part-unit'),
+    path('request_part/', views.request_part, name='request-part'),
     path('message_list/', views.message_list, name='message-list'),
     path('message_read/', views.mark_message_as_read, name='message-read'),
     path('send_message/', views.send_message, name='send-message'),

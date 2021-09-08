@@ -8,11 +8,11 @@
       <a href="{% url 'parts:parts-order-list' %}"><i class="bi bi-chevron-left"></i></a>
       Parts Order Details: Order #{{ partsorder.id }}
       {% if partsorder.get_delivery_status == 'awaiting' %}
-          <span class="badge rounded-pill bg-danger">Awaiting Delivery</span>
+      <span class="badge rounded-pill bg-danger">Awaiting Delivery</span>
       {% elif partsorder.get_delivery_status == 'delivered' %}
-          <span class="badge rounded-pill bg-success">Delivered</span>
+      <span class="badge rounded-pill bg-success">Delivered</span>
       {% else %}
-          <span class="badge rounded-pill bg-warning">Part Delivered</span>
+      <span class="badge rounded-pill bg-warning text-dark">Partly Delivered</span>
       {% endif %}
     </h1>
   </div>
@@ -34,29 +34,30 @@
               <b>£{{ part_unit.total_cost }}</b>
             </small>
             {% if not part_unit.checked_in %}
-            <a type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#checkinModal{{ part_unit.id }}">Check in</a>
-            <div class="modal fade" id="checkinModal{{ part_unit.id }}" tabindex="-1" aria-labelledby="checkinModal{{ part_unit.id }}Label"
-          aria-hidden="true">
-          <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="checkinModal{{ part_unit.id }}Label">Confirm check-in of:</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <p>{{ part_unit.quantity }} x {{ part_unit.part.name }}</p>
-                <b>Confirm that part has been received in correct quantity and condition?</b>
-                <hr>
-                <form action="{% url 'parts:check-in-parts-order-unit' %}" method="post">
-                  {% csrf_token %}
-                  <input type="hidden" name="parts_order_unit" value="{{ part_unit.id }}">
-                  <button type="submit" class="btn-success btn">Yes</button>
-                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
-                </form>
+            <a type="button" class="btn btn-success" data-bs-toggle="modal"
+              data-bs-target="#checkinModal{{ part_unit.id }}">Check in</a>
+            <div class="modal fade" id="checkinModal{{ part_unit.id }}" tabindex="-1"
+              aria-labelledby="checkinModal{{ part_unit.id }}Label" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="checkinModal{{ part_unit.id }}Label">Confirm check-in of:</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>{{ part_unit.quantity }} x {{ part_unit.part.name }}</p>
+                    <b>Confirm that part has been received in correct quantity and condition?</b>
+                    <hr>
+                    <form action="{% url 'parts:check-in-parts-order-unit' %}" method="post">
+                      {% csrf_token %}
+                      <input type="hidden" name="parts_order_unit" value="{{ part_unit.id }}">
+                      <button type="submit" class="btn-success btn">Yes</button>
+                      <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                    </form>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
             {% endif %}
           </div>
         </li>

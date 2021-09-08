@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.views import generic
 from .models import Part, PartsOrder, PartsOrderUnit
 from .forms import PartForm
+from cars.models import PartRequest
 
 # Create your views here.
 @login_required
@@ -50,6 +51,7 @@ def add_part_to_order(request):
     error = None
     quantity = 0
     cost = 0.0
+    part_request = None
     try:
         quantity = int(request.POST['quantity'])
     except:
@@ -60,6 +62,11 @@ def add_part_to_order(request):
         cost = float(request.POST['part_cost'])
     except:
         error = 'There is an issue with the cost of this item. Please try again.'
+    if 'part_request_id' in request.POST:
+        try:
+            part_request = PartRequest.objects.get(id=request.POST['part_request_id'])
+        except:
+            error = 'There was an issue with the request. Please try again.'
     if error:
         messages.warning(request, error)
     else:
@@ -77,7 +84,11 @@ def add_part_to_order(request):
         # this line necessary because you have only modified a session variable
         # rather than request.session itself so changes wouldn't save
         request.session.modified = True
-    return HttpResponseRedirect(reverse('parts:parts-admin'))
+        if part_request:
+            part_request.on_order = True
+            part_request.save()
+            request.session['unactioned_part_requests'] = PartRequest.objects.filter(assigned_to = request.user.manager, on_order=False).count()
+    return HttpResponseRedirect(request.headers['Referer'])
 
 def update_part_in_order(request):
     try:
@@ -125,6 +136,9 @@ def order_parts(request):
 class PartsOrderList(generic.ListView):
     model = PartsOrder
 
+    def get_ordering(self):
+        return '-placed'
+
 class PartsOrderDetail(generic.DetailView):
     model = PartsOrder
 
@@ -144,4 +158,15 @@ def check_in_parts_order_unit(request):
         part.save()
         part.refresh_from_db()
         parts_order_unit.save()
+    return HttpResponseRedirect(request.headers['Referer'])
+
+def part_request_list(request):
+    part_requests = PartRequest.objects.filter(assigned_to = request.user.manager)
+    context = {
+        'part_requests': part_requests,
+    }
+    return render(request, 'parts/partrequest_list.html', context)
+
+def delete_part_request(request):
+    print(request.POST)
     return HttpResponseRedirect(request.headers['Referer'])

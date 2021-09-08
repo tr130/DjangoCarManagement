@@ -1,5 +1,6 @@
 from django import forms
-from .models import Job, LabourUnit, Message, PartUnit
+from django.utils.translation import gettext_lazy as _
+from .models import Job, LabourUnit, Message, PartRequest, PartUnit
 
 class JobForm(forms.ModelForm):
     class Meta:
@@ -37,4 +38,17 @@ class MessageForm(forms.ModelForm):
             'car': forms.HiddenInput(),
             'job': forms.HiddenInput(),
             'body': forms.Textarea(attrs={'rows':'5'})
+        }
+
+class PartRequestForm(forms.ModelForm):
+    class Meta:
+        model = PartRequest
+        fields = ('part', 'notes', 'quantity', 'requested_by', 'assigned_to', 'job',)
+        labels = {
+            'notes': _('Further Information (if the part is not listed, state what you need here):')
+        }
+        widgets = {
+            'requested_by': forms.HiddenInput(),
+            'job': forms.HiddenInput(),
+            'notes': forms.Textarea(attrs={'rows': '5'})
         }

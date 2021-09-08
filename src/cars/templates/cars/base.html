@@ -63,8 +63,8 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" aria-current="page" href="{% url 'cars:invoice-list' %}">My Invoices
-              {% if unpaid %}
-              <span class="badge bg-danger">{{ unpaid }}</span>
+              {% if request.session.unpaid %}
+              <span class="badge bg-danger">{{ request.session.unpaid }}</span>
               {% endif %}
             </a>
           </li>
@@ -83,13 +83,18 @@
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <li><a class="dropdown-item" href="{% url 'parts:parts-admin' %}">Parts Admin</a></li>
               <li><a class="dropdown-item" href="{% url 'parts:parts-order-list' %}">Parts Orders</a></li>
+              <li><a class="dropdown-item" href="{% url 'parts:part-request-list' %}">Parts Requests
+              {% if request.session.unactioned_part_requests %}
+                <span class="badge bg-danger">{{ request.session.unactioned_part_requests }}</span>
+              {% endif %}
+              </a></li>
             </ul>
           </li>
           {% endif %}
           <li class="nav-item">
             <a href="{% url 'cars:message-list' %}" aria-current="page" class="nav-link">My messages
-              {% if unread %}
-              <span class="badge bg-danger">{{ unread }}</span>
+              {% if request.session.unread %}
+              <span class="badge bg-danger">{{ request.session.unread }}</span>
               {% endif %}</a>
           </li>
         </ul>

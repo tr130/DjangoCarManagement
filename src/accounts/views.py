@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from cars.models import Invoice, Message, PartRequest
 
 
 def logout_view(request):
@@ -22,8 +23,12 @@ def login_view(request):
                     request.session['role'] = request.user.groups.first().name
                 else:
                     request.session['role'] = None
+                request.session['unread'] = Message.objects.filter(recipient = request.user, unread = True).count()
                 if request.session['role'] == 'Manager':
                     request.session['parts_order'] = {}
+                    request.session['unactioned_part_requests'] = PartRequest.objects.filter(assigned_to = request.user.manager, on_order=False).count()
+                elif request.session['role'] == 'Customer':
+                    request.session['unpaid'] = Invoice.objects.filter(job__car__owner__user=request.user, job__paid=False).count()
                 if request.GET.get('next'):
                     return redirect(request.GET.get('next'))
                 else:

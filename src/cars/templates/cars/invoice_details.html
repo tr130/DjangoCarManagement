@@ -71,7 +71,7 @@
                     <p class='m-1'>Total (inc. VAT)</p>
                     <p class='m-1'><b>£{{ invoice.grand_total|floatformat:2 }}</b></p>
                 </li>
-                {% if role == 'Customer' and invoice.job.paid == False %}
+                {% if request.session.role == 'Customer' and invoice.job.paid == False %}
                 <a style="outline:2px solid black" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#paymentModal">
                     Pay £{{ invoice.grand_total|floatformat:2 }}
                 </a>
@@ -112,7 +112,7 @@
     </div>
 </div>
 
-{% if role == 'Customer' %}
+{% if request.session.role == 'Customer' %}
 
 <!-- Modal -->
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel"

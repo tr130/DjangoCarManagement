@@ -10,6 +10,13 @@ class Part(models.Model):
     def __str__(self):
         return f"{self.name} ({self.stock_level} in stock)"
 
+    def get_total_on_order(self):
+        total = 0
+        for order in self.partsorderunit_set.all():
+            if not order.checked_in:
+                total += order.quantity
+        return total
+
 class PartsOrder(models.Model): 
     placed = models.DateTimeField(auto_now_add=True)
     sub_total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -55,3 +62,4 @@ class PartsOrderUnit(models.Model):
         self.cost_each = self.part.cost_price
         self.total_cost = self.cost_each * self.quantity
         return super().save()
+

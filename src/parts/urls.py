@@ -15,5 +15,7 @@ urlpatterns = [
     path('update_part_in_order/', views.update_part_in_order, name='update-part-in-order'),
     path('partsorder_list/', views.PartsOrderList.as_view(), name='parts-order-list'),
     path('partsorder_detail/<str:pk>', views.PartsOrderDetail.as_view(), name='parts-order-detail'),
+    path('part_request_list/', views.part_request_list, name='part-request-list'),
+    path('delete_part_request/', views.delete_part_request, name='delete-part-request'),
     path('check_in_parts_order_unit/', views.check_in_parts_order_unit, name='check-in-parts-order-unit'),
     ]

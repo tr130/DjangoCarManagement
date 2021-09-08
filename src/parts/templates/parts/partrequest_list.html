@@ -1,0 +1,129 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between">
+  <h1>Part Requests</h1>
+  <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+    aria-controls="offcanvasRight">
+    Order{% if request.session.parts_order %}
+    <span class="badge bg-danger">{{ request.session.parts_order|length }}</span>
+    {% endif %}</button>
+</div>
+<div class="list-group">
+  {% if not part_requests %}
+  You have no part requests.
+  {% endif %}
+  {% for part_request in part_requests %}
+  <div class="list-group-item list-group-item-action">
+    <div class="row">
+      <div class="col-6">
+        <h5 class="mb-1 d-inline">{{ part_request.quantity }} x {{ part_request.part.name }}</h5>
+        {% if part_request.on_order %}
+        <span class="badge rounded-pill bg-success">On order</span>
+        {% else %}
+        <span class="badge rounded-pill bg-danger">Not on order</span>
+        {% endif %}<br>
+        {% if part_request.job %}
+        Job: <a href="{% url 'cars:job-details' part_request.job.id %}">{{ part_request.job.title }}</a>
+        {% endif %}<br>
+        Requested by: {{ part_request.requested_by }}<br>
+        <p class="mb-1">{{ part_request.notes }}</p>
+      </div>
+      <div class="col-3">
+        {{ part_request.part.stock_level }} in stock<br>
+        {{ part_request.part.get_total_on_order }} on order<br>
+      </div>
+      <div class="col-2">
+        <small>{{ part_request.requested }}</small>
+        {% if not part_request.on_order %}
+        <form action="{% url 'parts:add-part-to-order' %}" method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="part_id" value="{{ part_request.part.id }}">
+          <input type="hidden" name="part_name" value="{{ part_request.part.name }}">
+          <input type="hidden" name="part_cost" value="{{ part_request.part.cost_price }}">
+          <input type="hidden" name="quantity" value="{{ part_request.quantity }}">
+          <input type="hidden" name="part_request_id" value="{{ part_request.id }}">
+          <button type="submit" class="btn-primary btn-sm">Add request to parts order.</button>
+        </form>
+        {% endif %}
+      </div>
+      <div class="col-1">
+        <a type="button" class="btn btn-danger" data-bs-toggle="modal"
+          data-bs-target="#deleteModal{{ part_request.id }}"><i class="bi bi-trash-fill"></i></a>
+        <div class="modal fade" id="deleteModal{{ part_request.id }}" tabindex="-1"
+          aria-labelledby="deleteModal{{ part_request.id }}Label" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="deleteModal{{ part_request.id }}Label">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <b>Confirm delete of part request?</b>
+                <hr>
+                <form action="{% url 'parts:delete-part-request' %}" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="part_request_id" value="{{ part_request.id }}">
+                  <button type="submit" class="btn-success btn">Yes</button>
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <h5 id="offcanvasRightLabel">Order Summary</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="list-group">
+      {% for part,values in request.session.parts_order.items %}
+      <div class="list-group-item list-group-item-action" aria-current="true">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{ values.name }}</h5>
+          <form action="{% url 'parts:remove-part-from-order' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="part_id" value="{{ part }}">
+            <button type="submit" class="btn-danger btn"><i class="bi bi-trash-fill"></i></button>
+          </form>
+        </div>
+        <p class="mb-1">
+          <span class="order_quant">{{ values.quantity }}</span> @
+          £<span class="part_cost">{{ values.cost|floatformat:2}}</span> =
+          £<span class="part_subtotal"></span></p>
+      </div>
+      {% endfor %}
+      <div class="list-group-item list-group-item-action list-group-item-dark" aria-current="true">
+        <div class="d-flex w-100 justify-content-between">
+          <h4 class="mb-1">Total (ex. VAT)</h4>
+        </div>
+        <h5 class="mb-1" id="parts_order_total"></h5>
+      </div>
+      <a href="{% url 'parts:order-parts' %}" class="list-group-item list-group-item-action list-group-item-success"
+        aria-current="true">
+        <h2 class="mb-1">Place Order <i class="bi bi-chevron-right"></i></h2>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script defer="true">
+  const quantities = document.getElementsByClassName('order_quant');
+  const partCosts = document.getElementsByClassName('part_cost');
+  const partSubtotals = document.getElementsByClassName('part_subtotal');
+  let total = 0.00
+  for (let i = 0; i < quantities.length; i++) {
+    partSubtotal = quantities[i].textContent * partCosts[i].textContent
+    partSubtotals[i].textContent = partSubtotal.toFixed(2)
+    total += partSubtotal
+  }
+  document.getElementById('parts_order_total').textContent = '£' + total.toFixed(2)
+</script>
+{% endblock content %}

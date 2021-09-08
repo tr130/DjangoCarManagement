@@ -50,12 +50,12 @@
           <p>{{ job.description }}</p>
         </li>
       </ul>
-      {% if role != 'Customer' and not job.invoiced %}
+      {% if request.session.role != 'Customer' and not job.invoiced %}
       {% if job.complete %}
       <a type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#completeModal">
         Mark as incomplete
       </a>
-        {% if role == 'Manager' %}
+        {% if request.session.role == 'Manager' %}
         <a href="{% url 'cars:generate-invoice' job.id %}" class="btn btn-success">Generate Invoice</a>
         {% endif %}
       {% else %}
@@ -106,7 +106,7 @@
       <!-- ==== TIME UNITS ==== -->
 
       <h4 class="card-title">Time units</h4>
-      {% if role != 'Customer' %}
+      {% if request.session.role != 'Customer' %}
       <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#timeModal">
         Add job
       </a>
@@ -130,9 +130,12 @@
 
     <div class="col-4">
       <h4 class="card-title">Parts</h4>
-      {% if role != 'Customer' %}
+      {% if request.session.role != 'Customer' %}
       <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#partModal">
         Add part
+      </a>
+      <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#requestPartModal">
+        Request part
       </a>
       {% endif %}
 
@@ -147,7 +150,7 @@
           <small>Total cost:
             <b>£{{ part_unit.total_cost }}</b>
           </small>
-          {% if role != 'Customer' %}
+          {% if request.session.role != 'Customer' %}
             <form action="{% url 'cars:remove-part-unit' %}" method="post">
               {% csrf_token %}
               <input type="hidden" name="part_unit" value="{{ part_unit.id }}">
@@ -189,20 +192,6 @@
             </div>
           </div>
           <p class="mb-1">{{ message.body }}</p>
-          {% if role == 'Manager' and not message.job %}
-          <form action="{% url 'cars:assign-message-to-job' %}" method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="message_id" value="{{ message.id }}">
-            <select name="job_id" id="job_id">
-              <option name="job_id" value="" disabled selected>Assign to Job</option>
-              {% for job in car.job_set.all %}
-              <option name="job_id" value="{{ job.id }}">{{ job }}</option>
-              {% endfor %}
-            </select>
-            <button class="btn-secondary btn-sm">Assign to Job</button>
-          </form>
-
-          {% endif %}
           <div>
             <small><b>From:</b> {{ message.sender }}</small>
           </div>
@@ -231,7 +220,7 @@
   </div>
 </div>
 
-{% if role != 'Customer' %}
+{% if request.session.role != 'Customer' %}
 
 <!-- Modal -->
 <div class="modal fade" id="completeModal" tabindex="-1" aria-labelledby="completeModalLabel" aria-hidden="true">
@@ -271,8 +260,27 @@
         <form action="{% url 'cars:add-part-unit' %}" id="part-form" method="post">
           {% csrf_token %}
           {{ part_form|crispy }}
-          <input type="hidden" name="unit" value="part">
-          <button type="submit" class="btn btn-info mt-2">Save</button>
+          <button type="submit" class="btn btn-success mt-2">Save</button>
+          <button type="button" class="btn btn-danger mt-2" data-bs-dismiss="modal">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="requestPartModal" tabindex="-1" aria-labelledby="requestPartModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="requestPartModalLabel">Request part</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'cars:request-part' %}" id="part-request-form" method="post">
+          {% csrf_token %}
+          {{ part_request_form|crispy }}
+          <button type="submit" class="btn btn-success mt-2">Save</button>
           <button type="button" class="btn btn-danger mt-2" data-bs-dismiss="modal">Cancel</button>
         </form>
       </div>
@@ -293,7 +301,7 @@
           {% csrf_token %}
           {{ time_form|crispy }}
           <input type="hidden" name="unit" value="labour">
-          <button type="submit" class="btn btn-info mt-2">Save</button>
+          <button type="submit" class="btn btn-success mt-2">Save</button>
           <button type="button" class="btn btn-danger mt-2" data-bs-dismiss="modal">Cancel</button>
         </form>
       </div>

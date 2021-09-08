@@ -55,7 +55,11 @@
           {% else %}
               table-success
           {% endif %}
-        ">{{ part.stock_level }}</td>
+        ">{{ part.stock_level }} 
+          {% if part.get_total_on_order %}
+            <small>({{ part.get_total_on_order }} on order)</small>
+          {% endif %} 
+      </td>
       <td><form action="{% url 'parts:add-part-to-order' %}" method="post">
       {% csrf_token %}
         <input type="hidden" name="part_id" value="{{ part.id }}">

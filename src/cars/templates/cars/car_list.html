@@ -10,7 +10,7 @@
             <div>
                 <h5 class="mb-1 d-inline">{{ car.model_name }}</h5>
             </div>
-            {% if role == 'Manager' %}
+            {% if request.session.role == 'Manager' %}
                 Owner: {{ car.owner }}
             {% endif %}
         </div>

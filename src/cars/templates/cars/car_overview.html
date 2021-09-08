@@ -10,7 +10,7 @@
 <div class="row">
   <div class="list-group col-8">
     <h3>Jobs</h3>
-    {% if role == 'Manager' %}
+    {% if request.session.role == 'Manager' %}
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
   Add job
 </button>
@@ -71,7 +71,7 @@
           <small>{{ message.created }}</small>
         </div>
         <p class="mb-1">{{ message.body }}</p>
-        {% if role == 'Manager' and not message.job %}
+        {% if request.session.role == 'Manager' and not message.job %}
           <form action="{% url 'cars:assign-message-to-job' %}" method="POST">
           {% csrf_token %}
           <input type="hidden" name="message_id" value="{{ message.id }}">
