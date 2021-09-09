@@ -8,7 +8,7 @@
     <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#collapse-{{ order.id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
         <div class="d-flex w-100 justify-content-between">
             <div>
-                <h5 class="mb-1 d-inline">{{ order.placed }}</h5>
+                <h5 class="mb-1 d-inline">#{{ order.id }} - {{ order.placed }}</h5>
                 {% if order.get_delivery_status == 'awaiting' %}
                     <span class="badge rounded-pill bg-danger">Awaiting Delivery</span>
                 {% elif order.get_delivery_status == 'delivered' %}

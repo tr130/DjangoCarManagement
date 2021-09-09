@@ -168,5 +168,8 @@ def part_request_list(request):
     return render(request, 'parts/partrequest_list.html', context)
 
 def delete_part_request(request):
-    print(request.POST)
+    try:
+        PartRequest.objects.get(id=request.POST['part_request_id']).delete()
+    except:
+        messages.warning(request, 'An error has occured. Please try again.')
     return HttpResponseRedirect(request.headers['Referer'])

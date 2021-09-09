@@ -113,3 +113,6 @@ class PartRequest(models.Model):
     notes = models.TextField(blank=True)
     on_order = models.BooleanField(default=False)
     requested = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.quantity} x {self.part.name}"
