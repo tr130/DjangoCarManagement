@@ -2,4 +2,9 @@ env
 __pycache__/
 .env
 local_settings.py
+<<<<<<< HEAD
 settings.py.save
+=======
+src/
+settings.py.save
+>>>>>>> 6eb7a29e4cd573120b7d0b958aa8984b2f19f1ad
