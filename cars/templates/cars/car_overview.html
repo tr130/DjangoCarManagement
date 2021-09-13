@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+
 <h1>Car overview</h1>
 <h3>{{ car.model_name }}</h3>
 <h4>{{ car.year }}</h4>
@@ -11,7 +12,7 @@
   <div class="list-group col-8">
     <h3>Jobs</h3>
     {% if request.session.role == 'Manager' %}
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jobModal">
   Add job
 </button>
 {% endif %}
@@ -58,7 +59,7 @@
     </form>
       </div>
       
-      {% for message in messages %}
+      {% for message in message_list %}
       <div class="list-group-item list-group-item-action">
         <div class="d-flex w-100 justify-content-between">
           <div>
@@ -114,11 +115,11 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="jobModal" tabindex="-1" aria-labelledby="jobModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add job</h5>
+        <h5 class="modal-title" id="jobModalLabel">Add job</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">

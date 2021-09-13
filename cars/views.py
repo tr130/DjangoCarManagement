@@ -50,8 +50,12 @@ def car_list(request):
 def car_overview(request, pk):
     if request.method == 'POST':
         if request.POST['form_type'] == 'job':
-            job_form = JobForm(request.POST)
-            job_form.save()
+            try:
+                job_form = JobForm(request.POST)
+                job_form.save()
+            except:
+                messages.warning(request, 'An error has occurred. Please try again.')
+                return HttpResponseRedirect(request.headers['REFERER'])
         return HttpResponseRedirect(reverse('cars:car-overview', args=(pk,)))
     context = {}
     car = get_object_or_404(Car, id=pk)
@@ -62,11 +66,11 @@ def car_overview(request, pk):
         if request.user != car.owner.user:
             return redirect('cars:home')
     elif request.session['role'] == 'Manager':
-        context['job_form'] = JobForm(initial={'car': car, 'manager': request.user})
+        context['job_form'] = JobForm(initial={'car': car, 'manager': request.user.manager})
         context['message_form'] = MessageForm(initial={'car': car, 'sender': request.user, 'recipient': car.owner.user})
     elif request.session['role'] == 'Employee':
         context['message_form'] = MessageForm(initial={'car': car, 'sender': request.user, 'recipient': car.owner.user})
-    context['messages'] = car.message_set.all().order_by('-created')
+    context['message_list'] = car.message_set.all().order_by('-created')
 
     return render(request, 'cars/car_overview.html', context)
 
@@ -318,9 +322,9 @@ def receipt_pdf(request, pk):
 
 @login_required
 def message_list(request):
-    messages = request.user.message_sender.all().union(request.user.message_recipient.all()).order_by('-created')
+    message_list = request.user.message_sender.all().union(request.user.message_recipient.all()).order_by('-created')
     context = {
-        'messages': messages,
+        'message_list': message_list,
     }
     return render(request, 'cars/messages.html', context)
 
@@ -345,3 +349,13 @@ def assign_message_to_job(request):
     message.job = job
     message.save()
     return HttpResponseRedirect(request.headers['Referer'])
+
+@login_required
+def report_issue(request):
+    issue = MessageForm(request.POST)
+    try:
+        issue.save()
+    except:
+        messages.warning(request, 'Unable to report the issue. Please contact the administrator directly.')
+    return HttpResponseRedirect(request.headers['REFERER'])
+    

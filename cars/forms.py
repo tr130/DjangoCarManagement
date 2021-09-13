@@ -32,6 +32,9 @@ class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
         fields = ('sender', 'recipient', 'car', 'job', 'subject', 'body')
+        labels = {
+            'body': _('Message')
+        }
         widgets = {
             'sender': forms.HiddenInput(),
             'recipient': forms.HiddenInput(),

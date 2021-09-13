@@ -5,20 +5,6 @@
 
 {% block content %}
 
-<!-- ==== FLASH MESSAGES ==== -->
-
-{% if messages %}
-<div class="messages">
-  {% for message in messages %}
-  <div class="alert alert-danger mb-0 text-center" role="alert">
-    {{ message }}
-  </div>
-  {% endfor %}
-</div>
-{% endif %}
-
-<!-- ==== -->
-
 <div class="d-flex justify-content-between">
 <h1>Parts Admin</h1>
 <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">

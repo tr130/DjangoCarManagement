@@ -22,4 +22,5 @@ urlpatterns = [
     path('invoice_list/', views.invoice_list, name='invoice-list'),
     path('receipt/<str:pk>', views.receipt_pdf, name="receipt-pdf"),
     path('<str:pk>/', views.car_overview, name='car-overview'),
+    path('report-issue', views.report_issue, name='report-issue'),
 ]
