@@ -139,11 +139,9 @@
           {% csrf_token %}
           {{ report_form|crispy }}
           <input type="hidden" name="form_type" value="job">
-          <button type="submit" class="btn btn-info mt-2">Save</button>
+          <button type="submit" class="btn btn-success mt-2">Save</button>
+          <button type="button" class="btn btn-danger mt-2" data-bs-dismiss="modal">Cancel</button>
         </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
