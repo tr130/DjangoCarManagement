@@ -110,14 +110,20 @@ def job_details(request, pk):
     
     if request.method == 'POST':
         if request.POST['unit'] == 'labour':
-            form = LabourUnitForm(request.POST)
-            form.save()
-            job.in_progress = True
-            job.save()
+            try:
+                form = LabourUnitForm(request.POST)
+                form.save()
+                job.in_progress = True
+                job.save()
+            except:
+                messages.warning(request, 'Something\'s gone wrong. Please try again.')
         elif request.POST['unit'] == 'complete':
-            job.complete = not job.complete
-            job.in_progress = not job.complete
-            job.save()
+            try:
+                job.complete = not job.complete
+                job.in_progress = not job.complete
+                job.save()
+            except:
+                messages.warning(request, 'Something\'s gone wrong. Please try again.')
         
         return HttpResponseRedirect(reverse('cars:job-details', args=(job.id,)))
     current_time = timezone.now()
