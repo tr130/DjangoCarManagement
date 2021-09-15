@@ -1,22 +1,22 @@
 {% extends 'cars/base.html' %}
 
 {% block content %}
-{% if role != 'Customer' %}
+{% if request.session['role'] != 'Customer' %}
     <a href="{% url 'cars:job-list' %}" class="option">
         Jobs
     </a>
 {% endif %}
-{% if role != 'Employee' %}
+{% if request.session['role'] != 'Employee' %}
     <a href="{% url 'cars:car-list' %}" class="option">
         Cars
     </a>
 {% endif %}
-{% if role == 'Manager' %}
+{% if request.session['role'] == 'Manager' %}
     <a href="{% url 'parts:parts-admin' %}" class="option">
         Parts
     </a>
 {% endif %}
-{% if role == 'Customer' %}
+{% if request.session['role'] == 'Customer' %}
     <a href="{% url 'cars:invoice-list' %}" class="option">
         Invoices
     </a>
