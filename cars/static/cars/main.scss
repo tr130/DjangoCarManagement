@@ -1,4 +1,4 @@
-@import 'login', 'home';
+@import 'variables', 'login', 'home', 'parts';
 
 body {
     background-color: #bbb;
@@ -8,10 +8,44 @@ body {
     margin: 0 2rem 2rem 2rem;
 }
 
+.bg-cars {
+    background-color: $color-cars;
+}
 
+.bg-jobs {
+    background-color: $color-jobs;
+}
+
+.bg-parts {
+    background-color: $color-parts;
+}
+
+.bg-messages {
+    background-color: $color-messages;
+}
 
 .clickable:hover {
     cursor: pointer;
 }
 
+.option_buttons {
+    border: 1px solid #bbb;
+    padding: 0.5rem;
+
+    a, button {
+        margin: 0.5rem;
+    }
+}
+
+.list-group {
+    border: 1px solid #bbb;
+}
+
 .list-group-item, .list-group-item:hover{ z-index: auto; }
+
+.card-footer {
+    width: 100%;
+    h4 {
+        padding-top: 0.5rem;
+    }
+}

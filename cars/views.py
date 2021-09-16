@@ -99,7 +99,9 @@ def job_details(request, pk):
     if request.session['role'] == 'Employee' or request.session['role'] == 'Manager':
         time_form = LabourUnitForm(initial={'employee': request.user.employee.id, 'job': job})
         part_form = PartUnitForm(initial={'added_by': request.user.employee.id, 'job': job})
+        part_form.fields['part'].queryset = Part.objects.all().order_by('name')
         part_request_form = PartRequestForm(initial={'requested_by': request.user, 'assigned_to': job.manager, 'job':job})
+        part_request_form.fields['part'].queryset = Part.objects.all().order_by('name')
         message_form = MessageForm(initial={
             'subject': job.title,
             'car': job.car, 

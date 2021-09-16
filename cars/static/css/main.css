@@ -10,8 +10,16 @@
 
 .option:hover {
   text-decoration: none;
-  background-color: #7e6399;
+  background-color: #FF0035;
   color: black;
+}
+
+.home_options {
+  margin-top: 2rem;
+}
+
+.order_quantity {
+  width: 4rem;
 }
 
 body {
@@ -22,11 +30,48 @@ body {
   margin: 0 2rem 2rem 2rem;
 }
 
+.bg-cars {
+  background-color: #59546C;
+}
+
+.bg-jobs {
+  background-color: #8B939C;
+}
+
+.bg-parts {
+  background-color: #38405F;
+}
+
+.bg-messages {
+  background-color: #0E131F;
+}
+
 .clickable:hover {
   cursor: pointer;
 }
 
+.option_buttons {
+  border: 1px solid #bbb;
+  padding: 0.5rem;
+}
+
+.option_buttons a, .option_buttons button {
+  margin: 0.5rem;
+}
+
+.list-group {
+  border: 1px solid #bbb;
+}
+
 .list-group-item, .list-group-item:hover {
   z-index: auto;
+}
+
+.card-footer {
+  width: 100%;
+}
+
+.card-footer h4 {
+  padding-top: 0.5rem;
 }
 /*# sourceMappingURL=main.css.map */

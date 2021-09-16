@@ -12,6 +12,11 @@
 
 .option:hover {
     text-decoration: none;
-    background-color: rgb(126, 99, 153);
+    //background-color: rgb(126, 99, 153);
+    background-color: $color-highlight;
     color: black;
+}
+
+.home_options {
+    margin-top: 2rem;
 }

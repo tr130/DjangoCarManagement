@@ -19,7 +19,6 @@
         Add part
       </a></th>
       <th class="scope:col">Cost Price</th>
-      <th class="scope:col">Customer Price</th>
       <th class="scope:col">Stock Level</th>
       <th class="scope:col">Order</th>
     </tr>
@@ -32,7 +31,6 @@
         {{ part.name }}
       </th>
       <td>£{{ part.cost_price }}</td>
-      <td>£{{ part.customer_price }}</td>
       <td class="
           {% if part.stock_level < 5 %}
               table-danger
@@ -52,11 +50,11 @@
         <input type="hidden" name="part_name" value="{{ part.name }}">
         <input type="hidden" name="part_cost" value="{{ part.cost_price }}">
         {% if part.id|stringformat:'s' in request.session.parts_order.keys %}
-          <input type="number" name="quantity" min="0" value="{{ request.session.parts_order|get_quantity:part.id }}">
-          <input type="submit" value="Update Quantity">
+          <input type="number" class="order_quantity" name="quantity" min="0" value="{{ request.session.parts_order|get_quantity:part.id }}">
+          <input type="submit" value="Update">
         {% else %}
-          <input type="number" name="quantity" min="0" value="0">
-          <input type="submit" value="Add to Order">
+          <input type="number" class="order_quantity" name="quantity" min="0" value="0">
+          <input type="submit" value="Add">
         {% endif %}
         
       </form></td>
