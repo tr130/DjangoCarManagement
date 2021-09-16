@@ -1,29 +1,30 @@
 {% extends 'cars/base.html' %}
 
 {% block content %}
+<div class="row mt-3 mx-auto">
 {% if request.session.role != 'Customer' %}
-    <a href="{% url 'cars:job-list' %}" class="option">
+    <a href="{% url 'cars:job-list' %}" class="option col-xs-12 col-md-6 mx-auto m-3 bg-primary">
         Jobs
     </a>
 {% endif %}
 {% if request.session.role != 'Employee' %}
-    <a href="{% url 'cars:car-list' %}" class="option">
+    <a href="{% url 'cars:car-list' %}" class="option col-xs-12 col-md-6 mx-auto m-3 bg-warning">
         Cars
     </a>
 {% endif %}
 {% if request.session.role == 'Manager' %}
-    <a href="{% url 'parts:parts-admin' %}" class="option">
+    <a href="{% url 'parts:parts-admin' %}" class="option col-xs-12 col-md-6 mx-auto m-3 bg-success">
         Parts
     </a>
 {% endif %}
 {% if request.session.role == 'Customer' %}
-    <a href="{% url 'cars:invoice-list' %}" class="option">
+    <a href="{% url 'cars:invoice-list' %}" class="option col-xs-12 col-md-6 mx-auto m-3 bg-primary">
         Invoices
     </a>
 {% endif %}
-<a href="{% url 'cars:message-list' %}" class="option">
+<a href="{% url 'cars:message-list' %}" class="option col-xs-12 col-md-6 mx-auto m-3 bg-danger">
     Messages
 </a>
-
+</div>
 
 {% endblock content %}

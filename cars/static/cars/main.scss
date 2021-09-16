@@ -1,0 +1,17 @@
+@import 'login', 'home';
+
+body {
+    background-color: #bbb;
+}
+
+#content {
+    margin: 0 2rem 2rem 2rem;
+}
+
+
+
+.clickable:hover {
+    cursor: pointer;
+}
+
+.list-group-item, .list-group-item:hover{ z-index: auto; }

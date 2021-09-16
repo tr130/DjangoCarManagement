@@ -31,7 +31,7 @@
         </div>
         <p class="mb-1">{{ job.car.reg }} - {{ job.car.model_name }}</p>
         <div class="d-flex w-100 justify-content-between">
-            <small>{{ job.description|truncatewords:6 }}</small>
+            <small>{{ job.description|truncatewords:5 }}</small>
             
             <small>
                 {% if job.expected_complete < current_time %}

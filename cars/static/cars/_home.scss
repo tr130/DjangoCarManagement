@@ -1,0 +1,17 @@
+.option {
+    text-decoration: none;
+    padding: 5rem;
+    //margin: 1rem;
+    color: white;
+    //background-color: rebeccapurple;
+    display: flex;
+    justify-content: center;
+    max-width: 80vw;
+    font-size: 4rem;
+}
+
+.option:hover {
+    text-decoration: none;
+    background-color: rgb(126, 99, 153);
+    color: black;
+}

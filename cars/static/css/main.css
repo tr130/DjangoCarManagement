@@ -1,0 +1,32 @@
+.option {
+  text-decoration: none;
+  padding: 5rem;
+  color: white;
+  display: flex;
+  justify-content: center;
+  max-width: 80vw;
+  font-size: 4rem;
+}
+
+.option:hover {
+  text-decoration: none;
+  background-color: #7e6399;
+  color: black;
+}
+
+body {
+  background-color: #bbb;
+}
+
+#content {
+  margin: 0 2rem 2rem 2rem;
+}
+
+.clickable:hover {
+  cursor: pointer;
+}
+
+.list-group-item, .list-group-item:hover {
+  z-index: auto;
+}
+/*# sourceMappingURL=main.css.map */
