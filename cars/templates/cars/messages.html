@@ -15,17 +15,17 @@
                 {% elif request.user == message.sender %}
                     <i class="bi bi-arrow-right-square-fill" style="color:blue"></i>
                 {% endif %}
-                <h5 class="mb-1 d-inline">{{ message.subject }}</h5>
-                {% if message.car %}
-                    <a href="{% url 'cars:car-overview' message.car.id %}">{{ message.car.model_name }}({{ message.car.reg }})</a>
-                {% endif %}
-                {% if message.job %}
-                    Job: <a href="{% url 'cars:job-details' message.job.id %}">{{ message.job.title }}</a>
-                {% endif %}
+                <h5 class="mb-1 d-inline">{{ message.subject }}</h5><br>
             </div>
             <small>{{ message.created }}</small>
         </div>
         <p class="mb-1">{{ message.body }}</p>
+        {% if message.car %}
+            Car: <a href="{% url 'cars:car-overview' message.car.id %}">{{ message.car.model_name }}({{ message.car.reg }})</a><br>
+        {% endif %}
+        {% if message.job %}
+            Job: <a href="{% url 'cars:job-details' message.job.id %}">{{ message.job.title }}</a><br>
+        {% endif %}
         <div class="d-flex w-100 justify-content-between align-items-center">
             <small>From: {{ message.sender }}</small>
             <small>To: {{ message.recipient }}</small>

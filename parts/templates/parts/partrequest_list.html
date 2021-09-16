@@ -16,7 +16,7 @@
   {% for part_request in part_requests %}
   <div class="list-group-item list-group-item-action">
     <div class="row">
-      <div class="col-6">
+      <div class="col-xs-12 col-md-6">
         <h5 class="mb-1 d-inline">{{ part_request.quantity }} x {{ part_request.part.name }}</h5>
         {% if part_request.on_order %}
         <span class="badge rounded-pill bg-success">On order</span>
@@ -29,11 +29,11 @@
         Requested by: {{ part_request.requested_by }}<br>
         <p class="mb-1">{{ part_request.notes }}</p>
       </div>
-      <div class="col-3">
+      <div class="col-xs-12 col-md-3">
         {{ part_request.part.stock_level }} in stock<br>
         {{ part_request.part.get_total_on_order }} on order<br>
       </div>
-      <div class="col-2">
+      <div class="col-xs-12 col-md-2">
         <small>{{ part_request.requested }}</small>
         {% if not part_request.on_order %}
         <form action="{% url 'parts:add-part-to-order' %}" method="POST">
@@ -43,12 +43,12 @@
           <input type="hidden" name="part_cost" value="{{ part_request.part.cost_price }}">
           <input type="hidden" name="quantity" value="{{ part_request.quantity }}">
           <input type="hidden" name="part_request_id" value="{{ part_request.id }}">
-          <button type="submit" class="btn-primary btn-sm">Add request to parts order.</button>
+          <button type="submit" class="btn-primary btn-sm mt-2">Add request to parts order.</button>
         </form>
         {% endif %}
       </div>
-      <div class="col-1">
-        <a type="button" class="btn btn-danger" data-bs-toggle="modal"
+      <div class="col-xs-12 col-md-1">
+        <a type="button" class="btn btn-danger mt-2" data-bs-toggle="modal"
           data-bs-target="#deleteModal{{ part_request.id }}"><i class="bi bi-trash-fill"></i></a>
         <div class="modal fade" id="deleteModal{{ part_request.id }}" tabindex="-1"
           aria-labelledby="deleteModal{{ part_request.id }}Label" aria-hidden="true">
