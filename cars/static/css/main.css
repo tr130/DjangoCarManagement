@@ -18,6 +18,15 @@
   margin-top: 2rem;
 }
 
+.car_details {
+  border: 2px solid black;
+  margin-top: 1rem;
+}
+
+.car_specifics {
+  padding-left: 0.75rem;
+}
+
 .order_quantity {
   width: 4rem;
 }
