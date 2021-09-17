@@ -1,3 +1,5 @@
+{% extends 'cars/base.html' %}
+
 {% block title %}
     Login
 {% endblock title %}
@@ -9,17 +11,5 @@
         {{ error_message }}
     </div>
 {% endif %}
-
-<div class="container">
-    <div class="row">
-        <div class="col-6">
-            <form action="" method="post" class="p-3 border border-2">
-                {% csrf_token %}
-                {{ form }}
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-        </div>
-    </div>
-</div>
 
 {% endblock content %}

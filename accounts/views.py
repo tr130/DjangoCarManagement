@@ -6,7 +6,7 @@ from cars.models import Invoice, Message, PartRequest
 
 def logout_view(request):
     logout(request)
-    return redirect('accounts:login')
+    return redirect('cars:index')
 
 def login_view(request):
     error_message = None

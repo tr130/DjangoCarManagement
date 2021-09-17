@@ -20,3 +20,11 @@
 .home_options {
     margin-top: 2rem;
 }
+
+.btn-login {
+    align-self: right;
+}
+
+.btn-login:hover {
+    background-color: lighten($color-parts, 30%);
+}

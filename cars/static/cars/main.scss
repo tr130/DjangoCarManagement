@@ -1,4 +1,4 @@
-@import 'variables', 'login', 'home', 'cars', 'parts';
+@import 'variables', 'login', 'home', 'cars', 'parts', 'slider';
 
 body {
     background-color: #bbb;
@@ -6,6 +6,8 @@ body {
 
 #content {
     margin: 0 2rem 2rem 2rem;
+    margin: 0;
+    overflow: hidden;
 }
 
 .bg-cars {
@@ -22,6 +24,10 @@ body {
 
 .bg-messages {
     background-color: $color-messages;
+}
+
+.bg-highlight {
+    background-color: $color-highlight;
 }
 
 .clickable:hover {

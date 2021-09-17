@@ -18,6 +18,9 @@ from xhtml2pdf import pisa
 
 # Create your views here.
 
+def index(request):
+    return render(request, 'cars/index.html')
+
 def home(request):
     return render(request, 'cars/home.html')
 

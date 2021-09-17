@@ -17,6 +17,12 @@
     </div>
     <div class="card-body row">
         <div class="col-xs-12 col-md-8">
+        <div class="option_buttons">
+            <a href="{% url 'cars:invoice-pdf' invoice.job.id %}" class="btn btn-primary">View Invoice as PDF</a>
+            {% if invoice.job.paid %}
+            <a href="{% url 'cars:receipt-pdf' invoice.job.id %}" class="btn btn-primary">View Receipt</a>
+            {% endif %}
+        </div>
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                     <h5 class="card-title">{{ invoice.job.car.reg }} - {{ invoice.job.car.model_name }}</h5>
@@ -28,10 +34,7 @@
                     <p>{{ invoice.job.description }}</p>
                 </li>
             </ul>
-            <a href="{% url 'cars:invoice-pdf' invoice.job.id %}" class="btn btn-primary">View Invoice as PDF</a>
-            {% if invoice.job.paid %}
-            <a href="{% url 'cars:receipt-pdf' invoice.job.id %}" class="btn btn-primary">View Receipt</a>
-            {% endif %}
+            
         </div>
         <div class="col-xs-12 col-md-4">
             <ul class="list-group list-group-flush">

@@ -1,0 +1,246 @@
+{% extends 'cars/base.html' %}
+
+{% block content %}
+  <div id="slider" class="slider">
+    <div class="wrapper">
+      <div class="items" id="items">
+        <div class="slide slider_slide slider_slide-webd">
+          <div class="slider_info standard">
+            <h1 class="slider_title">Web Design</h1>
+            <p class="slider_text">For businesses looking to make a strong<br>and effective first impression.</p>
+            <a href="https://www.netmatters.co.uk/web-design" class="slider_btn btn-bg-webd btn">Find out more <i
+                class="icn_devt fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="slide slider_slide slider_slide-it">
+          <div class="slider_info standard">
+            <h1 class="slider_title">It Support</h1>
+            <p class="slider_text">Fast and effective IT support<br>services for your business.</p>
+            <a href="https://www.netmatters.co.uk/web-design" class="slider_btn btn-bg-it btn">Find out more <i
+                class="icn_devt fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="slide slider_slide slider_slide-tele">
+          <div class="slider_info standard">
+            <h1 class="slider_title">Telecoms Services</h1>
+            <p class="slider_text">A new approach to connectivity, see how<br>we can help your business.</p>
+            <a href="https://www.netmatters.co.uk/web-design" class="slider_btn btn-bg-tele btn">Find out more <i
+                class="icn_devt fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="slide slider_slide slider_slide-besp">
+          <div class="slider_info standard">
+            <h1 class="slider_title">Bespoke Software</h1>
+            <p class="slider_text">Bring your business together<br>with solutions that grow with you.</p>
+            <a href="https://www.netmatters.co.uk/web-design" class="slider_btn btn-bg-besp btn">Find out more <i
+                class="icn_devt fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="slide slider_slide slider_slide-digm" style="background-image: linear-gradient(to right,
+        rgba(black, 0.9),
+        rgba(black, 0.3)), url('/media/car_mgmt.jpg')">
+          <div class="slider_info standard">
+            <h1 class="slider_title">Digital Marketing</h1>
+            <p class="slider_text">Generating you new business through<br>results-driven marketing activities.</p>
+            <a href="https://www.netmatters.co.uk/web-design" class="slider_btn btn-bg-digm btn">See how we can help you <i
+                class="icn_devt fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="slide slider_slide slider_slide-cybs">
+          <div class="slider_info standard">
+            <h1 class="slider_title">Cyber Security</h1>
+            <p class="slider_text">Keeping businesses and their customers'<br>sensitive data protected.</p>
+            <a href="https://www.netmatters.co.uk/web-design" class="slider_btn btn-bg-cybs btn">Find out more <i
+                class="icn_devt fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="slider_controls">
+      <div id="1" class="slider_control"></div>
+      <div id="2" class="slider_control"></div>
+      <div id="3" class="slider_control"></div>
+      <div id="4" class="slider_control"></div>
+      <div id="5" class="slider_control"></div>
+      <div id="6" class="slider_control"></div>
+    </div>
+  </div>
+
+  <script defer>
+    document.querySelector('body').style.overflow = 'hidden';
+    const sliderItems = document.getElementById('items'),
+    controls = document.getElementsByClassName('slider_controls')[0],
+    controlButtons = document.getElementsByClassName('slider_control'),
+    slider = document.querySelector(".slider");
+
+
+slide(slider, sliderItems);
+
+function slide(wrapper, items) {
+  let posX1 = 0,
+      posX2 = 0,
+      posInitial,
+      posFinal,
+      index = 0,
+      allowShift = true
+      autoplay = true;
+
+  const threshold = 100,
+      slides = items.getElementsByClassName('slide'),
+      slidesLength = slides.length,
+      firstSlide = slides[0],
+      lastSlide = slides[slidesLength - 1],
+      cloneFirst = firstSlide.cloneNode(true),
+      cloneLast = lastSlide.cloneNode(true),
+      totalButtons = controlButtons.length;
+
+  for (let i = 0; i < slides.length; i++) {
+    slides[i].style.width = window.innerWidth + "px";
+  }
+
+  // Clone first and last slide
+  items.appendChild(cloneFirst);
+  items.insertBefore(cloneLast, firstSlide);
+  wrapper.classList.add('loaded');
+  items.style.left = (0 - window.innerWidth) + "px";
+  index++; 
+  setActiveButton(index);
+  
+  // Mouse and Touch events
+  items.onmousedown = dragStart;
+
+  // Touch events
+  items.addEventListener('touchstart', dragStart);
+  items.addEventListener('touchend', dragEnd);
+  items.addEventListener('touchmove', dragAction);
+  
+  // Transition events
+  items.addEventListener('transitionend', checkIndex);
+
+  window.addEventListener('resize', function() {
+    for (let i = 0; i < slides.length; i++) {
+      slides[i].style.width = window.innerWidth + "px";
+    }
+  
+    if (items.offsetLeft % window.innerWidth) {
+      items.style.left = -(index * window.innerWidth) + "px";
+    }
+  });
+
+  controls.addEventListener('click', function(e) {
+    if (e.target.className === 'slider_control') {
+      autoplay = false;
+      items.classList.add('shifting');
+      items.style.left = -(e.target.id * window.innerWidth) + "px";
+      index = parseInt(e.target.id); 
+      setActiveButton(index);
+    }
+  });
+
+  function setActiveButton(index) {
+    for (let i = 0; i < totalButtons; i++) {
+      controlButtons[i].classList.remove('active');
+    }
+    controlButtons[(index + (totalButtons - 1)) % totalButtons].classList.add('active');
+  }
+
+  setInterval( function() {
+    if (autoplay) {
+      shiftSlide(1)
+    }
+    else {
+      autoplay = true;
+    }
+  }, 4000);
+  
+  function dragStart (e) {
+    if(allowShift) {
+    autoplay = false;
+    e = e || window.event;
+    e.preventDefault();
+    posInitial = items.offsetLeft;
+    items.style.cursor = 'pointer';
+    
+    if (e.type == 'touchstart') {
+      posX1 = e.touches[0].clientX;
+    } else {
+      posX1 = e.clientX;
+      document.onmouseup = dragEnd;
+      document.onmousemove = dragAction;
+    }
+  }
+  }
+
+  function dragAction (e) {
+    e = e || window.event;
+    
+    if (e.type == 'touchmove') {
+      posX2 = posX1 - e.touches[0].clientX;
+      posX1 = e.touches[0].clientX;
+    } else {
+      posX2 = posX1 - e.clientX;
+      posX1 = e.clientX;
+    }
+    items.style.left = (items.offsetLeft - posX2) + "px";
+  }
+  
+  function dragEnd (e) {
+    posFinal = items.offsetLeft;
+    items.style.cursor = 'default';
+    if (posFinal - posInitial < -threshold) {
+      shiftSlide(1, 'drag');
+    } else if (posFinal - posInitial > threshold) {
+      shiftSlide(-1, 'drag');
+    } else {
+      items.style.left = (posInitial) + "px";
+    }
+
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+  
+  function shiftSlide(dir, action) {
+    items.classList.add('shifting');
+    autoplay = false;
+    if (allowShift) {
+      if (!action) { posInitial = items.offsetLeft; }
+      if (dir == 1) {
+        items.style.left = (posInitial - window.innerWidth) + "px";
+        index++;      
+      } else if (dir == -1) {
+        items.style.left = (posInitial + window.innerWidth) + "px";
+        index--;      
+      }
+      if (items.offsetLeft % window.innerWidth) {
+        items.style.left = -(index * window.innerWidth) + "px";
+      }
+      setActiveButton(index);
+    };
+    
+    allowShift = false;
+  }
+    
+  function checkIndex (){
+    items.classList.remove('shifting');
+
+    if (index === 0) {
+      items.style.left = -(slidesLength * window.innerWidth) + "px";
+      index = slidesLength;
+    }
+
+    if (index === slidesLength + 1) {
+      items.style.left = -(1 * window.innerWidth) + "px";
+      index = 1;
+    }
+    
+    allowShift = true;
+  }
+}
+  </script>
+{% endblock content %}
