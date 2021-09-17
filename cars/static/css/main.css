@@ -58,7 +58,7 @@
 }
 
 .slider_slide-webd {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.3)), url(https://www.netmatters.co.uk/assets/images/thumbnails/full_height_slideshow/home-3wAI.jpg);
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.3)), url(../img/car_mgmt.jpg);
   background-position: center;
 }
 
@@ -166,17 +166,6 @@
 .active {
   opacity: 100%;
   position: relative;
-}
-
-.active::after {
-  content: "";
-  position: absolute;
-  top: -6px;
-  left: -6px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid #fff;
 }
 
 .prev,
