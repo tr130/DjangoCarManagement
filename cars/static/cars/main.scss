@@ -6,8 +6,13 @@ body {
 
 #content {
     margin: 0 2rem 2rem 2rem;
-    margin: 0;
     overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    #content {
+        margin: 0;
+    }
 }
 
 .bg-cars {

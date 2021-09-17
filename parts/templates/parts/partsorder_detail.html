@@ -28,10 +28,10 @@
           {% else %}
           <span class="badge rounded-pill bg-danger">Awaiting Delivery</span>
           {% endif %}
-          <p>{{ part_unit.quantity }} @ £{{ part_unit.cost_each }}</p>
+          <p>{{ part_unit.quantity }} @ £{{ part_unit.cost_each|floatformat:"2g" }}</p>
           <div class="d-flex justify-content-between">
             <small>Total cost:
-              <b>£{{ part_unit.total_cost }}</b>
+              <b>£{{ part_unit.total_cost|floatformat:"2g" }}</b>
             </small>
             {% if not part_unit.checked_in %}
             <a type="button" class="btn btn-success" data-bs-toggle="modal"
@@ -72,15 +72,15 @@
         </li>
         <li class="list-group-item d-flex justify-content-between">
           <p>Total (ex. VAT)</p>
-          <p><b>£{{ partsorder.sub_total|floatformat:2 }}</b></p>
+          <p><b>£{{ partsorder.sub_total|floatformat:"2g" }}</b></p>
         </li>
         <li class="list-group-item d-flex justify-content-between">
           <p>VAT</p>
-          <p><b>£{{ partsorder.vat|floatformat:2 }}</b></p>
+          <p><b>£{{ partsorder.vat|floatformat:"2g" }}</b></p>
         </li>
         <li style="outline:2px solid black" class="list-group-item d-flex justify-content-between">
           <p class='m-1'>Total (inc. VAT)</p>
-          <p class='m-1'><b>£{{ partsorder.grand_total|floatformat:2 }}</b></p>
+          <p class='m-1'><b>£{{ partsorder.grand_total|floatformat:"2g" }}</b></p>
         </li>
       </ul>
     </div>

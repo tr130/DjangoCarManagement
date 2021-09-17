@@ -40,8 +40,8 @@
 }
 
 .slider {
+  font-family: 'Varela Round';
   text-align: center;
-  color: white;
   border-top: 0.5px solid #bbbbbb;
   flex: 1 0 auto;
 }
@@ -54,31 +54,32 @@
 }
 
 .slider_slide-digm {
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url(../img/employee_request.jpg);
   background-position: center;
 }
 
 .slider_slide-webd {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.3)), url(../img/car_mgmt.jpg);
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url(../img/car_overview.jpg);
   background-position: center;
 }
 
 .slider_slide-cybs {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.3)), url(https://www.netmatters.co.uk/assets/images/thumbnails/full_height_slideshow/home-lQs1.jpg);
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url(../img/invoice.jpg);
   background-position: center;
 }
 
 .slider_slide-it {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.3)), url(https://www.netmatters.co.uk/assets/images/thumbnails/full_height_slideshow/home-57sJ.jpg);
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url(../img/parts_order.jpg);
   background-position: center;
 }
 
 .slider_slide-tele {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.3)), url(https://www.netmatters.co.uk/assets/images/thumbnails/full_height_slideshow/home-5yqm.jpg);
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url(../img/tabletandphone.jpg);
   background-position: center;
 }
 
 .slider_slide-besp {
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.3)), url(https://www.netmatters.co.uk/assets/images/thumbnails/full_height_slideshow/home-sqvx.jpg);
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), url(../img/invoicepdf.jpg);
   background-position: center;
 }
 
@@ -89,16 +90,28 @@
 
 .slider_info {
   z-index: 500;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle, white, transparent);
+  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .slider_title {
-  text-transform: uppercase;
+  position: absolute;
+  top: 35%;
+  left: 0;
+  width: 100%;
+  z-index: 2;
   font-size: 3rem;
   margin: 0;
 }
 
 .slider_text {
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   margin: 2rem auto;
 }
 
@@ -142,9 +155,18 @@
 .slider_controls {
   position: absolute;
   top: 94%;
+  left: 0;
   width: 100%;
   display: flex;
   justify-content: center;
+  z-index: 2;
+}
+
+.slider_options {
+  position: absolute;
+  top: 80%;
+  left: 0;
+  width: 100%;
   z-index: 2;
 }
 
@@ -153,7 +175,7 @@
   width: 12px;
   height: 12px;
   margin: 8px;
-  background: #fff;
+  background: #8B939C;
   opacity: 60%;
   border-radius: 50%;
   margin-top: -20px;
@@ -166,6 +188,7 @@
 .active {
   opacity: 100%;
   position: relative;
+  background: #59546C;
 }
 
 .prev,
@@ -197,8 +220,13 @@ body {
 
 #content {
   margin: 0 2rem 2rem 2rem;
-  margin: 0;
   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  #content {
+    margin: 0;
+  }
 }
 
 .bg-cars {
