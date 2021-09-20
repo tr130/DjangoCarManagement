@@ -1,5 +1,7 @@
 {% extends 'cars/base.html' %}
 
+{% load crispy_forms_tags %}
+
 {% block content %}
   <div id="slider" class="slider">
     <div class="wrapper">
@@ -46,7 +48,7 @@
     <div class="slider_title">TR130 Car Management</div>
     <div class="slider_options">
       <button type="button" class="btn bg-messages text-light" data-bs-toggle="modal"
-          data-bs-target="#loginModal">Try the live demo</button>
+          data-bs-target="#demoModal">Try the live demo</button>
     </div>
     <div class="slider_controls">
       <div id="1" class="slider_control"></div>
@@ -57,6 +59,35 @@
       <div id="6" class="slider_control"></div>
     </div>
   </div>
+
+  <!-- ==== DEMO MODAL ==== -->
+    <div class="modal fade" id="demoModal" tabindex="-1" aria-labelledby="demoModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="demoModalLabel">Login</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="{% url 'accounts:login' %}" method="post" class="">
+                {% csrf_token %}
+                <input type="hidden" name="username" value="demo_manager">
+                <button type="submit" class="btn mx-auto btn-demo bg-jobs">Login as manager</button>
+            </form>
+            <form action="{% url 'accounts:login' %}" method="post" class="">
+                {% csrf_token %}
+                <input type="hidden" name="username" value="demo_employee">
+                <button type="submit" class="btn mx-auto btn-demo bg-parts text-light">Login as employee</button>
+            </form>
+            <form action="{% url 'accounts:login' %}" method="post" class="">
+                {% csrf_token %}
+                <input type="hidden" name="username" value="demo_customer">
+                <button type="submit" class="btn mx-auto btn-demo bg-cars text-light">Login as customer</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
   <script defer>
     document.querySelector('body').style.overflow = 'hidden';

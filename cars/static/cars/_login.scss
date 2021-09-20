@@ -1,0 +1,10 @@
+.btn-demo {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+
+    &:hover {
+        background-color: $color-highlight;
+    }
+}

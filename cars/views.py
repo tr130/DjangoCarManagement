@@ -21,6 +21,7 @@ from xhtml2pdf import pisa
 def index(request):
     return render(request, 'cars/index.html')
 
+@login_required
 def home(request):
     return render(request, 'cars/home.html')
 

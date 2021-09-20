@@ -95,6 +95,17 @@
     &_btn {
       font-size: 1.2rem;
     }
+
+    @media (max-width: 768px) {
+      &_title {
+          font-size: 2.5rem;
+          top: 25%;
+      }
+
+      &_text {
+        font-size: 1.2rem;
+      }
+    } 
   
   }
   /////////////
