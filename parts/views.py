@@ -143,7 +143,6 @@ class PartsOrderDetail(generic.DetailView):
     model = PartsOrder
 
 def check_in_parts_order_unit(request):
-    print(request.POST)
     error = None
     try:
         parts_order_unit = PartsOrderUnit.objects.get(id=request.POST['parts_order_unit'])
