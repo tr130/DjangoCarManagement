@@ -48,7 +48,7 @@
   </div>
     <div class="list-group col-xs-12 col-md-4 mt-3 car_specifics">
       <h3>Messages</h3>
-      <div class="btn-group">
+      {% comment %} <div class="btn-group">
         <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
           New message
         </button>
@@ -58,7 +58,10 @@
       <input type="hidden" name="form_type" value="message">
       <button type="submit" class="btn btn-primary">Add message</button>
     </form>
-      </div>
+      </div> {% endcomment %}
+      <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
+            New message
+          </a>
       
       {% for message in message_list %}
       <div class="list-group-item list-group-item-action">
@@ -129,6 +132,26 @@
           {{ job_form|crispy }}
           <input type="hidden" name="form_type" value="job">
           <button type="submit" class="btn btn-success mt-2">Save</button>
+          <button type="button" class="btn btn-danger mt-2" data-bs-dismiss="modal">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="messageModalLabel">New message</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'cars:send-message' %}" id="message-form" method="post">
+            {% csrf_token %}
+            {{ message_form|crispy }}
+            <input type="hidden" name="form_type" value="message">
+            <button type="submit" class="btn btn-success mt-2">Send</button>
           <button type="button" class="btn btn-danger mt-2" data-bs-dismiss="modal">Cancel</button>
         </form>
       </div>
