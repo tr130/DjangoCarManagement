@@ -7,6 +7,7 @@ app_name = 'cars'
 urlpatterns = [
     path('', views.index, name='index'),
     path('home/', views.home, name='home'),
+    path('car/<str:pk>/', views.car_overview, name='car-overview'),
     path('job/<str:pk>', views.job_details, name='job-details'),
     path('job_list/', views.job_list, name='job-list'),
     path('car_list/', views.car_list, name='car-list'),
@@ -21,7 +22,6 @@ urlpatterns = [
     path('invoice_pdf/<str:pk>', views.invoice_pdf, name='invoice-pdf'),
     path('invoice_details/<str:pk>', views.invoice_details, name='invoice-details'),
     path('invoice_list/', views.invoice_list, name='invoice-list'),
-    path('receipt/<str:pk>', views.receipt_pdf, name="receipt-pdf"),
-    path('<str:pk>/', views.car_overview, name='car-overview'),
+    path('receipt/<str:pk>', views.receipt_pdf, name='receipt-pdf'),
     path('report-issue', views.report_issue, name='report-issue'),
 ]
