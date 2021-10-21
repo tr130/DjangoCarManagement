@@ -1,7 +1,7 @@
 from cars.models import PartRequest
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import F
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
@@ -13,24 +13,24 @@ from .models import Part, PartsOrder, PartsOrderUnit
 
 
 # Create your views here.
-@login_required
+@permission_required('parts.add_part')
 def parts_admin(request):
     """Show all parts, ordered by name."""
-    role = request.session['role']
-    if role != 'Manager':
-        return redirect('cars:home')
+    # if request.session['role'] != 'Manager':
+    #     return redirect('cars:home')
     parts = Part.objects.all().order_by('name')
     part_form = PartForm()
     context = {
-        'role': role,
         'parts': parts,
         'part_form': part_form,
     }
     return render(request, 'parts/parts_admin.html', context)
 
-@login_required
+@permission_required('parts.add_part')
 def part_details(request, pk):
     """Display details of a part with option to edit."""
+    if request.session['role'] != 'Manager':
+        return redirect('cars:home')
     try:
         part = Part.objects.get(id=pk)
     except:
@@ -42,14 +42,14 @@ def part_details(request, pk):
     }
     return render(request, 'parts/part_details.html', context)
 
-@login_required
+@permission_required('parts.add_part')
 def add_part(request):
     """Save PartForm received via request as a new Part instance."""
     part = PartForm(request.POST)
     part.save()
     return HttpResponseRedirect(reverse('parts:parts-admin'))
 
-@login_required
+@permission_required('parts.add_part')
 def edit_part(request):
     """Update an existing Part using PartForm received via request."""
     part = Part.objects.get(id=request.POST['part_id'])
@@ -57,7 +57,7 @@ def edit_part(request):
     updated.save()
     return HttpResponseRedirect(reverse('parts:parts-admin'))
 
-@login_required
+@permission_required('parts.add_part')
 def add_part_to_order(request):
     """After validation, add a part to the parts order session variable."""
     error = None
@@ -102,7 +102,7 @@ def add_part_to_order(request):
             request.session['unactioned_part_requests'] = PartRequest.objects.filter(assigned_to = request.user.manager, on_order=False).count()
     return HttpResponseRedirect(request.headers['Referer'])
 
-@login_required
+@permission_required('parts.add_part')
 def update_part_in_order(request):
     """Update the quantity of a part in the parts order session variable."""
     try:
@@ -112,7 +112,7 @@ def update_part_in_order(request):
         messages.warning(request, 'An error has occurred. Please retry.')
     return HttpResponseRedirect(request.headers['Referer'])
 
-@login_required
+@permission_required('parts.add_part')
 def remove_part_from_order(request):
     """Remove a part from the parts order session variable."""
     try:
@@ -122,7 +122,7 @@ def remove_part_from_order(request):
         messages.warning(request, 'An error has occurred. Please retry.')
     return HttpResponseRedirect(request.headers['Referer'])
 
-@login_required
+@permission_required('parts.add_part')
 def order_parts(request):
     """Create new PartsOrder.
     
@@ -155,18 +155,20 @@ def order_parts(request):
         return HttpResponseRedirect(reverse('parts:parts-admin'))
     return render(request, 'parts/parts_order.html')
 
-class PartsOrderList(LoginRequiredMixin, generic.ListView):
+class PartsOrderList(PermissionRequiredMixin, generic.ListView):
     """List PartsOrders, ordered by most recent."""
+    permission_required = 'parts.add_part'
     model = PartsOrder
 
     def get_ordering(self):
         return '-placed'
 
-class PartsOrderDetail(LoginRequiredMixin, generic.DetailView):
+class PartsOrderDetail(PermissionRequiredMixin, generic.DetailView):
     """Show details for a PartsOrder"""
+    permission_required = 'parts.add_part'
     model = PartsOrder
 
-@login_required
+@permission_required('parts.add_part')
 def check_in_parts_order_unit(request):
     """Mark a PartsOrderUnit as checked in and update stock level of Part."""
     error = None
@@ -185,7 +187,7 @@ def check_in_parts_order_unit(request):
         parts_order_unit.save()
     return HttpResponseRedirect(request.headers['Referer'])
 
-@login_required
+@permission_required('parts.add_part')
 def part_request_list(request):
     """List current PartRequests."""
     part_requests = PartRequest.objects.filter(assigned_to = request.user.manager)
@@ -194,7 +196,7 @@ def part_request_list(request):
     }
     return render(request, 'parts/partrequest_list.html', context)
 
-@login_required
+@permission_required('parts.add_part')
 def delete_part_request(request):
     """Delete a PartRequest."""
     try:
