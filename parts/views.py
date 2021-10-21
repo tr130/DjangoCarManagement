@@ -12,6 +12,7 @@ from cars.models import PartRequest
 # Create your views here.
 @login_required
 def parts_admin(request):
+    """Show all parts, ordered by name."""
     role = request.session['role']
     if role != 'Manager':
         return redirect('cars:home')
@@ -24,7 +25,9 @@ def parts_admin(request):
     }
     return render(request, 'parts/parts_admin.html', context)
 
+@login_required
 def part_details(request, pk):
+    """Display details of a part with option to edit."""
     try:
         part = Part.objects.get(id=pk)
     except:
@@ -36,18 +39,24 @@ def part_details(request, pk):
     }
     return render(request, 'parts/part_details.html', context)
 
+@login_required
 def add_part(request):
+    """Save PartForm received via request as a new Part instance."""
     part = PartForm(request.POST)
     part.save()
     return HttpResponseRedirect(reverse('parts:parts-admin'))
 
+@login_required
 def edit_part(request):
+    """Update an existing Part using PartForm received via request."""
     part = Part.objects.get(id=request.POST['part_id'])
     updated = PartForm(request.POST, instance=part)
     updated.save()
     return HttpResponseRedirect(reverse('parts:parts-admin'))
 
+@login_required
 def add_part_to_order(request):
+    """After validation, add a part to the parts order session variable."""
     error = None
     quantity = 0
     cost = 0.0
@@ -90,7 +99,9 @@ def add_part_to_order(request):
             request.session['unactioned_part_requests'] = PartRequest.objects.filter(assigned_to = request.user.manager, on_order=False).count()
     return HttpResponseRedirect(request.headers['Referer'])
 
+@login_required
 def update_part_in_order(request):
+    """Update the quantity of a part in the parts order session variable."""
     try:
         request.session['parts_order'][request.POST['part_id']]['quantity'] = request.POST['quantity']
         request.session.modified = True
@@ -98,7 +109,9 @@ def update_part_in_order(request):
         messages.warning(request, 'An error has occurred. Please retry.')
     return HttpResponseRedirect(request.headers['Referer'])
 
+@login_required
 def remove_part_from_order(request):
+    """Remove a part from the parts order session variable."""
     try:
         request.session['parts_order'].pop(request.POST['part_id'])
         request.session.modified = True
@@ -106,7 +119,13 @@ def remove_part_from_order(request):
         messages.warning(request, 'An error has occurred. Please retry.')
     return HttpResponseRedirect(request.headers['Referer'])
 
+@login_required
 def order_parts(request):
+    """Create new PartsOrder.
+    
+    For each part in the PartsOrder, validate and create a new PartsOrderUnit,
+    linked to the PartsOrder
+    """
     if request.method == 'POST':
         order = PartsOrder()
         order.save()
@@ -133,16 +152,22 @@ def order_parts(request):
         return HttpResponseRedirect(reverse('parts:parts-admin'))
     return render(request, 'parts/parts_order.html')
 
+@login_required
 class PartsOrderList(generic.ListView):
+    """List PartsOrders, ordered by most recent."""
     model = PartsOrder
 
     def get_ordering(self):
         return '-placed'
 
+@login_required
 class PartsOrderDetail(generic.DetailView):
+    """Show details for a PartsOrder"""
     model = PartsOrder
 
+@login_required
 def check_in_parts_order_unit(request):
+    """Mark a PartsOrderUnit as checked in and update stock level of Part."""
     error = None
     try:
         parts_order_unit = PartsOrderUnit.objects.get(id=request.POST['parts_order_unit'])
@@ -159,14 +184,18 @@ def check_in_parts_order_unit(request):
         parts_order_unit.save()
     return HttpResponseRedirect(request.headers['Referer'])
 
+@login_required
 def part_request_list(request):
+    """List current PartRequests."""
     part_requests = PartRequest.objects.filter(assigned_to = request.user.manager)
     context = {
         'part_requests': part_requests,
     }
     return render(request, 'parts/partrequest_list.html', context)
 
+@login_required
 def delete_part_request(request):
+    """Delete a PartRequest."""
     try:
         PartRequest.objects.get(id=request.POST['part_request_id']).delete()
     except:
