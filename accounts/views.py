@@ -6,10 +6,15 @@ from decouple import config
 
 
 def logout_view(request):
+    """Log the user out."""
     logout(request)
     return redirect('cars:index')
 
 def login_view(request):
+    """Log a user in.
+    
+    Handle demo login options.
+    Set session variables for role, messages and optional counts"""
     error_message = None
     form = AuthenticationForm()
     if request.method == 'POST':

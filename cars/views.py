@@ -19,14 +19,17 @@ from xhtml2pdf import pisa
 # Create your views here.
 
 def index(request):
+    """Render the public index page."""
     return render(request, 'cars/index.html')
 
 @login_required
 def home(request):
+    """Render a user's homepage."""
     return render(request, 'cars/home.html')
 
 @login_required
 def job_list(request):
+    """List jobs, filtered according to user's role."""
     if request.session['role'] == 'Employee':
         jobs = request.user.employee.assigned_job.filter(complete=False).order_by('expected_complete')
     elif request.session['role'] == 'Manager':
@@ -42,6 +45,7 @@ def job_list(request):
 
 @login_required
 def car_list(request):
+    """List cars, filtered according to user's role."""
     if request.session['role'] == 'Customer':
         cars = request.user.customer.car_set.all()
     elif request.session['role'] == 'Manager':
@@ -52,6 +56,7 @@ def car_list(request):
 
 @login_required
 def car_overview(request, pk):
+    """Display car jobs and messages, with options to add new jobs and messages."""
     if request.method == 'POST':
         if request.POST['form_type'] == 'job':
             try:
@@ -80,6 +85,11 @@ def car_overview(request, pk):
 
 @login_required
 def job_details(request, pk):
+    """Display details about a job.
+    
+    Display time units, part units and messages relating to a job,
+    with forms to add these if applicable, and the option to complete
+    the job or request parts, if applicable."""
     job = get_object_or_404(Job, id=pk)
     if job.invoiced:
         return redirect('cars:invoice-details', job.id)
@@ -147,6 +157,7 @@ def job_details(request, pk):
     return render(request, 'cars/job_details.html', context)
 
 def add_part_unit(request):
+    """Create and store a new PartUnit based on form data in the request."""
     error = None
     quantity = 0
     try:
@@ -182,6 +193,7 @@ def add_part_unit(request):
         return redirect('cars:home')
 
 def remove_part_unit(request):
+    """Remove a PartUnit and replace the items in stock."""
     error = None
     try:
         part_unit = PartUnit.objects.get(id=request.POST['part_unit'])
@@ -201,6 +213,7 @@ def remove_part_unit(request):
         return redirect('cars:home')
 
 def request_part(request):
+    """Create and store a new PartRequest."""
     error = None
     quantity = 0
     if request.POST['job']:
@@ -234,6 +247,7 @@ def request_part(request):
         return redirect('cars:home')
 
 def generate_invoice(request, pk):
+    """Create and store a new Invoice related to a complete Job."""
     job = get_object_or_404(Job, id=pk)
     invoice = Invoice(job=job)
     invoice.save()
@@ -243,6 +257,7 @@ def generate_invoice(request, pk):
 
 @login_required
 def invoice_pdf(request, pk):
+    """Generate a PDF copy of an invoice."""
     job = get_object_or_404(Job, id=pk)
     if not job.invoiced:
         return redirect('cars:job-details', pk)
@@ -254,28 +269,21 @@ def invoice_pdf(request, pk):
     }
 
     template_path = 'cars/invoice.html'
-    # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-    # if download
-    #response['Content-Disposition'] = 'attachment; filename="report.pdf"'
-    #if display
     response['Content-Disposition'] = 'filename="invoice.pdf"'
-    # find the template and render it.
     template = get_template(template_path)
     html = template.render(context)
 
-    # create a pdf
     pisa_status = pisa.CreatePDF(
        html, dest=response)
-    # if error:
     if pisa_status.err:
        return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
 
-    #return render(request, 'cars/invoice.html', context)
 
 @login_required
 def invoice_details(request, pk):
+    """Show an Invoice details, and pay an Invoice if a Customer."""
     invoice = get_object_or_404(Invoice, job__id=pk)
     if request.session['role'] == 'Customer':
         if request.user != invoice.job.car.owner.user:
@@ -292,6 +300,7 @@ def invoice_details(request, pk):
 
 @login_required
 def invoice_list(request):
+    """List a Customer's Invoices."""
     if request.session['role'] != 'Customer':
         return redirect('cars:home')
     invoices = Invoice.objects.filter(job__car__owner__user = request.user)
@@ -302,6 +311,7 @@ def invoice_list(request):
 
 @login_required
 def receipt_pdf(request, pk):
+    """Generate a PDF copy of a receipt."""
     job = get_object_or_404(Job, id=pk)
     if not job.paid:
         return redirect('cars:job-details', pk)
@@ -314,26 +324,20 @@ def receipt_pdf(request, pk):
     
 
     template_path = 'cars/receipt.html'
-    # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-    # if download
-    #response['Content-Disposition'] = 'attachment; filename="report.pdf"'
-    #if display
     response['Content-Disposition'] = 'filename="receipt.pdf"'
-    # find the template and render it.
     template = get_template(template_path)
     html = template.render(context)
 
-    # create a pdf
     pisa_status = pisa.CreatePDF(
        html, dest=response)
-    # if error:
     if pisa_status.err:
        return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response
 
 @login_required
 def message_list(request):
+    """List a user's sent and received messages."""
     message_list = request.user.message_sender.all().union(request.user.message_recipient.all()).order_by('-created')
     context = {
         'message_list': message_list,
@@ -342,12 +346,14 @@ def message_list(request):
 
 @login_required
 def send_message(request):
+    """Create and store a new Message."""
     message_form = MessageForm(request.POST)
     message_form.save()
     return HttpResponseRedirect(request.headers['Referer'])
 
 @login_required
 def mark_message_as_read(request):
+    """Change a Message's 'unread' property to false."""
     message = Message.objects.get(id=request.POST['message_id'])
     message.unread = False
     message.save()
@@ -356,6 +362,7 @@ def mark_message_as_read(request):
 
 @login_required
 def assign_message_to_job(request):
+    """Assign a message to a job."""
     message = Message.objects.get(id=request.POST['message_id'])
     job = Job.objects.get(id=request.POST['job_id'])
     message.job = job
@@ -364,6 +371,7 @@ def assign_message_to_job(request):
 
 @login_required
 def report_issue(request):
+    """Create and store a message reporting an issue."""
     issue = MessageForm(request.POST)
     try:
         issue.save()

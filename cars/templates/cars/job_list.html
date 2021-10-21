@@ -34,11 +34,14 @@
             <small>{{ job.description|truncatewords:5 }}</small>
             
             <small>
+            {% if not job.complete %}
                 {% if job.expected_complete < current_time %}
-                <b style="color:red" >Overdue</b>
+                    <b style="color:red" >Overdue</b>
                 {% else %}
-                Expected in: <b>{{ job.expected_complete|timeuntil }}</b>
+                    Expected in: <b>{{ job.expected_complete|timeuntil }}</b>
                 {% endif %}
+            {% endif %}
+                
             </small>
             
         </div>

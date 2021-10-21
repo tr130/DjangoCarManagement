@@ -41,7 +41,9 @@
       <p class="mb-1">{{ job.description|truncatewords:6 }}</p>
       <div class="d-flex w-100 justify-content-between">
         <small>Assigned to: {{ job.employee }}</small>
-        <small>Expected by: {{ job.expected_complete }}</small>
+        {% if not job.complete %}
+          <small>Expected by: {{ job.expected_complete }}</small>
+        {% endif %}
       </div>
     </a>
     {% endfor %}
