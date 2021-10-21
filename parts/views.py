@@ -1,13 +1,16 @@
+from cars.models import PartRequest
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import generic
-from .models import Part, PartsOrder, PartsOrderUnit
+
 from .forms import PartForm
-from cars.models import PartRequest
+from .models import Part, PartsOrder, PartsOrderUnit
+
 
 # Create your views here.
 @login_required
@@ -152,16 +155,14 @@ def order_parts(request):
         return HttpResponseRedirect(reverse('parts:parts-admin'))
     return render(request, 'parts/parts_order.html')
 
-@login_required
-class PartsOrderList(generic.ListView):
+class PartsOrderList(LoginRequiredMixin, generic.ListView):
     """List PartsOrders, ordered by most recent."""
     model = PartsOrder
 
     def get_ordering(self):
         return '-placed'
 
-@login_required
-class PartsOrderDetail(generic.DetailView):
+class PartsOrderDetail(LoginRequiredMixin, generic.DetailView):
     """Show details for a PartsOrder"""
     model = PartsOrder
 
