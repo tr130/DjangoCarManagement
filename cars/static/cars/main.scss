@@ -35,6 +35,32 @@ body {
     background-color: $color-highlight;
 }
 
+.btn-disabled {
+    color: #fff !important;
+    background-color: #6c757d !important;
+    border-color: #6c757d !important  ;
+}
+
+.border-cars {
+    border-color: $color-cars;
+}
+
+.border-jobs {
+    border-color: $color-jobs;
+}
+
+.border-parts {
+    border-color: $color-parts;
+}
+
+.border-messages {
+    border-color: $color-messages;
+}
+
+.border-highlight {
+    border-color: $color-highlight;
+}
+
 .clickable:hover {
     cursor: pointer;
 }

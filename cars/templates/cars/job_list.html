@@ -3,12 +3,25 @@
 {% load tz %}
 
 {% block content %}
-<h1>{{ request.user }}'s Job List</h1>
+
+<div class="car_details col-md-6 mx-auto text-center p-2 bg-jobs text-light mb-2">
+  <h1>{{ request.user }}'s Job List</h1>
+  <h5>Filter:
+    <span id="in_progress" class="filter rounded-pill btn btn-warning text-dark" data-filter="on" onclick="switchFilter(this);">In Progress</span>
+    <span id="complete" class="filter rounded-pill btn btn-success" data-filter="on" onclick="switchFilter(this);">Complete</span>
+    {% if request.session.role == 'Manager' %}
+        <span id="invoiced" class="filter rounded-pill btn btn-primary" data-filter="on" onclick="switchFilter(this);">Invoiced</span>
+        <span id="paid" class="filter rounded-pill btn btn-success" data-filter="on" onclick="switchFilter(this);">Paid</span>
+    {% endif %}
+  </h5>
+</div>
+
 
 
 <div class="list-group">
     {% for job in jobs %}
-    <a href="{% url 'cars:job-details' job.id %}" class="list-group-item list-group-item-action">
+    <a href="{% url 'cars:job-details' job.id %}" class="list-group-item list-group-item-action 
+    in_progress-{{ job.in_progress }} complete-{{ job.complete }} invoiced-{{ job.invoiced }} paid-{{ job.paid }}">
         <div class="d-flex w-100 justify-content-between">
             <div>
                 <h5 class="mb-1 d-inline">{{ job.title }}</h5>
@@ -49,5 +62,33 @@
     {% endfor %}
 </div>
 
+<script>
+
+const jobs = document.getElementsByClassName('list-group-item');
+let displayState;
+
+switchFilter(document.getElementById('complete'));
+
+function switchFilter(category){
+    console.log(category);
+    test = `${category.id}-True`;
+    if (category.dataset.filter === 'on') {
+        displayState = 'none';
+        category.classList.add('btn-disabled');
+    } else {
+        displayState = 'block';
+        category.classList.remove('btn-disabled');
+    }
+
+    for (let job of jobs) {
+        if( job.classList.contains(test) ) {
+            job.style.display = displayState;
+        } 
+    }
+    category.dataset.filter = category.dataset.filter === 'on' ? 'off' : 'on';
+
+}
+
+</script>
 
 {% endblock content %}

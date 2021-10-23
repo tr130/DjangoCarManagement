@@ -31,7 +31,7 @@ def home(request):
 def job_list(request):
     """List jobs, filtered according to user's role."""
     if request.session['role'] == 'Employee':
-        jobs = request.user.employee.assigned_job.filter(complete=False).order_by('expected_complete')
+        jobs = request.user.employee.assigned_job.order_by('expected_complete')
     elif request.session['role'] == 'Manager':
         jobs = Job.objects.all().order_by('expected_complete')
     else:

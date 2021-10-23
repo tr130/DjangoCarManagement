@@ -11,18 +11,34 @@
 
 .option {
   text-decoration: none;
-  padding: 5rem;
+  padding: 1.5rem 5rem;
   color: white;
   display: flex;
   justify-content: center;
   max-width: 80vw;
-  font-size: 4rem;
+  font-size: 3rem;
 }
 
-.option:hover {
+.description {
+  border: 0.3rem solid;
+  background-color: #282c34;
+  color: #abb2bf;
+  padding: 0.5rem 1rem;
+}
+
+.option-group {
+  text-decoration: none;
+  margin-bottom: 1rem;
+}
+
+.option-group:hover .option {
   text-decoration: none;
   background-color: #FF0035;
   color: black;
+}
+
+.option-group:hover .description {
+  border-color: #FF0035;
 }
 
 .home_options {
@@ -268,6 +284,32 @@ body {
 
 .bg-highlight {
   background-color: #FF0035;
+}
+
+.btn-disabled {
+  color: #fff !important;
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+}
+
+.border-cars {
+  border-color: #59546C;
+}
+
+.border-jobs {
+  border-color: #8B939C;
+}
+
+.border-parts {
+  border-color: #38405F;
+}
+
+.border-messages {
+  border-color: #0E131F;
+}
+
+.border-highlight {
+  border-color: #FF0035;
 }
 
 .clickable:hover {
