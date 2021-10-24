@@ -1,9 +1,9 @@
 {% extends 'cars/base.html' %}
 
 {% block content %}
-<h1>Parts Orders</h1>
+<h1 class="col-md-6 mx-auto text-center p-2 bg-parts text-light m-4">Parts Orders</h1>
 
-<div class="list-group">
+<div class="list-group listbox mx-auto">
     {% for order in partsorder_list %}
     <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#collapse-{{ order.id }}" role="button" aria-expanded="false" aria-controls="collapseExample">
         <div class="d-flex w-100 justify-content-between">

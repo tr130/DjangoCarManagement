@@ -1,8 +1,8 @@
 {% extends 'cars/base.html' %}
 
 {% block content %}
-<div class="list-group">
-    <h3>Messages</h3>
+<div class="list-group listbox mx-auto">
+    <h1 class="col-md-6 mx-auto text-center p-2 bg-messages text-light m-4">Messages</h1>
     {% if not message_list %}
     You have no messages.
     {% endif %}

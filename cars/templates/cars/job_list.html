@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<div class="car_details col-md-6 mx-auto text-center p-2 bg-jobs text-light mb-2">
+<div class="car_details col-md-6 mx-auto text-center p-2 bg-jobs text-light m-4">
   <h1>{{ request.user }}'s Job List</h1>
   <h5>Filter:
     <span id="in_progress" class="filter rounded-pill btn btn-warning text-dark" data-filter="on" onclick="switchFilter(this);">In Progress</span>
@@ -18,7 +18,7 @@
 
 
 
-<div class="list-group">
+<div class="list-group listbox mx-auto">
     {% for job in jobs %}
     <a href="{% url 'cars:job-details' job.id %}" class="list-group-item list-group-item-action 
     in_progress-{{ job.in_progress }} complete-{{ job.complete }} invoiced-{{ job.invoiced }} paid-{{ job.paid }}">
@@ -67,7 +67,9 @@
 const jobs = document.getElementsByClassName('list-group-item');
 let displayState;
 
-switchFilter(document.getElementById('complete'));
+{% if request.session.role == 'Employee' %}
+    switchFilter(document.getElementById('complete'));
+{% endif %}
 
 function switchFilter(category){
     console.log(category);

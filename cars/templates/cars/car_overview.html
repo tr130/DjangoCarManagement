@@ -3,16 +3,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="car_details col-md-6 mx-auto text-center p-2 bg-cars text-light">
+<div class="col-md-6 mx-auto text-center p-2 bg-cars text-light mt-4">
   <h1>Car overview</h1>
   <h3>{{ car.model_name }} ({{ car.year }})</h3>
   <h5>Reg: {{ car.reg }}</h5>
   <h5>Owner: {{ car.owner }}<h5>
 </div>
 
-<div class="row">
+<div class="row m-2">
   <div class="list-group col-xs-12 col-md-8 mt-3 car_specifics">
-    <h3>Jobs</h3>
+    <h3 class="col-md-6 mx-auto text-center p-2 bg-cars text-light mb-4">Jobs</h3>
     {% if request.session.role == 'Manager' %}
     <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#jobModal">
       Add job
@@ -49,7 +49,7 @@
     {% endfor %}
   </div>
   <div class="list-group col-xs-12 col-md-4 mt-3 car_specifics">
-    <h3>Messages</h3>
+    <h3 class="col-md-6 mx-auto text-center p-2 bg-cars text-light mb-4">Messages</h3>
     <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#messageModal">
       New message
     </a>

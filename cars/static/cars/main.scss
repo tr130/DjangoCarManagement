@@ -5,13 +5,17 @@ body {
 }
 
 #content {
-    margin: 0 2rem 2rem 2rem;
+    //margin: 0 2rem 2rem 2rem;
     overflow: hidden;
 }
 
 @media (max-width: 768px) {
     #content {
         margin: 0;
+    }
+
+    .listbox {
+        max-width: 100% !important;
     }
 }
 
@@ -81,8 +85,14 @@ body {
 .list-group-item, .list-group-item:hover{ z-index: auto; }
 
 .card-footer {
-    width: 100%;
+    //width: 100%;
     h4 {
         padding-top: 0.5rem;
     }
+}
+
+.order-button {
+    position: absolute;
+    right: 10%;
+    top: 80px;
 }

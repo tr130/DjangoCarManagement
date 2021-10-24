@@ -3,10 +3,10 @@
 {% load tz %}
 
 {% block content %}
-<h1>{{ request.user }}'s Invoices</h1>
+<h1 class="col-md-6 mx-auto text-center p-2 bg-jobs text-light m-4">{{ request.user }}'s Invoices</h1>
 
 
-<div class="list-group">
+<div class="list-group listbox mx-auto">
     {% for invoice in invoices %}
     <div class="list-group-item list-group-item-action">
         <div class="d-flex w-100 justify-content-between">

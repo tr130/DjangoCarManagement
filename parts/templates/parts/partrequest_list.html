@@ -1,15 +1,16 @@
 {% extends 'cars/base.html' %}
 
 {% block content %}
-<div class="d-flex justify-content-between">
-  <h1>Part Requests</h1>
-  <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
-    aria-controls="offcanvasRight">
-    Order{% if request.session.parts_order %}
+<button class="order-button btn btn-primary text-light btn-lg p-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+  Order{% if request.session.parts_order %}
     <span class="badge bg-danger">{{ request.session.parts_order|length }}</span>
-    {% endif %}</button>
+  {% endif %}</button>
+
+<div class="d-flex justify-content-between">
+  <h1 class="col-md-6 mx-auto text-center p-2 bg-parts text-light m-4">Part Requests</h1>
+
 </div>
-<div class="list-group">
+<div class="list-group listbox mx-auto">
   {% if not part_requests %}
   You have no part requests.
   {% endif %}

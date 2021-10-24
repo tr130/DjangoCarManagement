@@ -1,7 +1,7 @@
 {% extends 'cars/base.html' %}
 
 {% block content %}
-<h1>Place Parts Order</h1>
+<h1 class="col-md-6 mx-auto text-center p-2 bg-parts text-light m-4">Place Parts Order</h1>
 <div class="row">
     <div class="list-group col-6">
         {% for part, values in request.session.parts_order.items %}

@@ -178,7 +178,7 @@ def add_part_unit(request):
         elif quantity > part.stock_level:
             error = 'Insufficient stock'
     if error is not None:
-        messages.warning(request, error)
+        messages.error(request, error)
     else:
         part.stock_level = F('stock_level') - quantity
         part.save()
@@ -233,7 +233,7 @@ def request_part(request):
         if quantity <= 0:
             error = 'Invalid quantity'
     if error is not None:
-        messages.warning(request, error)
+        messages.error(request, error)
     else:
         form = PartRequestForm(request.POST)
         form.save()
@@ -241,6 +241,7 @@ def request_part(request):
         job.save()
         if request.session['role'] == 'Manager':
             request.session['unactioned_part_requests'] = PartRequest.objects.filter(assigned_to = request.user.manager, on_order=False).count()
+        messages.success(request, 'Your part request has been sent.')
     try:
         return HttpResponseRedirect(request.headers['REFERER'])
     except:
@@ -321,7 +322,6 @@ def receipt_pdf(request, pk):
     context = {
         'invoice': invoice,
     }
-    
 
     template_path = 'cars/receipt.html'
     response = HttpResponse(content_type='application/pdf')

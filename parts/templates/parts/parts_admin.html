@@ -5,14 +5,14 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between">
-<h1>Parts Admin</h1>
-<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+<button class="order-button btn btn-primary text-light btn-lg p-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
   Order{% if request.session.parts_order %}
     <span class="badge bg-danger">{{ request.session.parts_order|length }}</span>
   {% endif %}</button>
+<div class="d-flex align-items-center">
+<h1 class="col-md-6 mx-auto text-center p-2 bg-parts text-light m-4">Parts Admin</h1>
 </div>
-<table class="table table-light table-hover table-bordered">
+<table class="table table-light table-hover table-bordered mx-auto listbox">
   <thead>
     <tr>
       <th scope="col">Part name <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#partModal">

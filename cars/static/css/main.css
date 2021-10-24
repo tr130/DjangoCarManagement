@@ -29,6 +29,7 @@
 .option-group {
   text-decoration: none;
   margin-bottom: 1rem;
+  max-width: 80vw;
 }
 
 .option-group:hover .option {
@@ -53,13 +54,12 @@
   background-color: #7d88b3;
 }
 
-.car_details {
-  border: 2px solid black;
-  margin-top: 1rem;
-}
-
 .car_specifics {
   padding-left: 0.75rem;
+}
+
+.listbox {
+  max-width: 80% !important;
 }
 
 .order_quantity {
@@ -256,13 +256,15 @@ body {
 }
 
 #content {
-  margin: 0 2rem 2rem 2rem;
   overflow: hidden;
 }
 
 @media (max-width: 768px) {
   #content {
     margin: 0;
+  }
+  .listbox {
+    max-width: 100% !important;
   }
 }
 
@@ -333,11 +335,13 @@ body {
   z-index: auto;
 }
 
-.card-footer {
-  width: 100%;
-}
-
 .card-footer h4 {
   padding-top: 0.5rem;
+}
+
+.order-button {
+  position: absolute;
+  right: 10%;
+  top: 80px;
 }
 /*# sourceMappingURL=main.css.map */
