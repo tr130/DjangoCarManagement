@@ -1,4 +1,4 @@
-#!/var/opt/car_mgmt/venv/bin/python
+#!/opt/car_mgmt/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
