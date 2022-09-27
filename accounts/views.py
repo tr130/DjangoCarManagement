@@ -18,6 +18,8 @@ def login_view(request):
     error_message = None
     form = AuthenticationForm()
     if request.method == 'POST':
+        if request.user.is_authenticated:
+            return redirect('cars:home')
         if request.POST['username'] == 'demo_manager':
             username = 'manager1'
             password = config('demo_manager')
@@ -60,3 +62,7 @@ def login_view(request):
     }
 
     return render(request, 'cars/index.html', context)
+
+def csrf_failure(request, reason="", template_name="cars/403_csrf.html"):
+    logout(request)
+    return redirect('cars:index')

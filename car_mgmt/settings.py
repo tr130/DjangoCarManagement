@@ -74,6 +74,8 @@ TEMPLATES = [
         },
     },
 ]
+            
+CSRF_FAILURE_VIEW = "accounts.views.csrf_failure"
 
 WSGI_APPLICATION = 'car_mgmt.wsgi.application'
 

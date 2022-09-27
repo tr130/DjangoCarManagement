@@ -46,10 +46,12 @@
       </div>
     </div>
     <div class="slider_title">TR130 Car Management</div>
+    {% if not request.user.is_authenticated %}
     <div class="slider_options">
       <button type="button" class="btn bg-messages text-light" data-bs-toggle="modal"
           data-bs-target="#demoModal">Try the live demo</button>
     </div>
+    {% endif %}
     <div class="slider_controls">
       <div id="1" class="slider_control"></div>
       <div id="2" class="slider_control"></div>
